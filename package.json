@@ -1,5 +1,5 @@
 {
-  "name": "e-commerce-app",
+  "name": "cartly",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -10,12 +10,14 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "mongoose": "^9.0.2",
     "next": "16.0.10",
     "react": "19.2.1",
     "react-dom": "19.2.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/mongoose": "^5.11.96",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
