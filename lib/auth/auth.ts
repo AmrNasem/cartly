@@ -2,8 +2,9 @@ import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { nextCookies } from "better-auth/next-js";
 import { getNativeDb } from "../native-db";
+import { connectDB, getClient } from "../db";
 
-const nativeDb = await getNativeDb();
+const nativeDb = await getClient();
 
 export const auth = betterAuth({
   database: mongodbAdapter(nativeDb),
