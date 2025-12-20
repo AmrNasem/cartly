@@ -4,11 +4,15 @@ on:
   push:
     branches: [main, release]
   pull_request:
-    branches: [main , release]
+    branches: [main, release]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      MONGODB_URI: mongodb://localhost:27017/cartly_test
+      DB_NAME: cartly_test
 
     steps:
       - name: Checkout repo
