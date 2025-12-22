@@ -5,6 +5,7 @@ export interface IProductImage {
   url: string;
   alt?: string;
   order?: number;
+  publicId?: string;
 }
 
 export interface IProduct extends Document {
@@ -28,6 +29,7 @@ const ProductImageSchema = new Schema<IProductImage>(
     url: { type: String, required: true, trim: true },
     alt: { type: String, default: "" },
     order: { type: Number, default: 0 },
+    publicId: { type: String, trim: true },
   },
   { _id: true }
 );
@@ -46,11 +48,11 @@ const ProductSchema = new Schema<IProduct>(
     description: { type: String, default: "" },
     price: { type: Number, required: true, min: 0 },
     compareAtPrice: { type: Number, default: 0 },
-    stock: { type: Number, default: 0 },
+    stock: { type: Number, default: 1 },
     categoryId: {
       type: Schema.Types.ObjectId,
       ref: "Category",
-      required: true,
+      require: true,
     },
     createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
     isPublished: { type: Boolean, default: false },
