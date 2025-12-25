@@ -3,6 +3,7 @@ import { APIError } from "@/lib/api/errors";
 import { requireAdmin } from "@/lib/auth/guards";
 import { connectDB } from "@/lib/db";
 import { Product } from "@/lib/models";
+import { enrichProducts } from "@/lib/product/enrich-product";
 
 export async function DELETE(
   req: Request,
@@ -46,12 +47,15 @@ export async function GET(
     if (!slug) throw new APIError("Missing slug param", 400);
 
     await connectDB();
-    const product = await Product.findOne({ slug, deletedAt: null });
+    const product = await Product.findOne({ slug, deletedAt: null }).lean();
     if (!product) throw new APIError("Product not found", 404);
+
+    const enrichedProduct = await enrichProducts([product]);
+
     return new Response(
       JSON.stringify({
         message: "Product fetched successfully!",
-        payload: product,
+        payload: enrichedProduct,
       })
     );
   } catch (err) {

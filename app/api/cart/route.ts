@@ -23,6 +23,7 @@ export async function POST(request: Request) {
       addedProduct = await CartItem.create({
         productId,
         cartId: cart._id,
+        userId: session.user.id,
         quantity,
       });
     } catch (err: any) {

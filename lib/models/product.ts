@@ -65,6 +65,17 @@ const ProductSchema = new Schema<IProduct>(
     versionKey: false,
   }
 );
+// Default listing
+ProductSchema.index({ deletedAt: 1, createdAt: -1 });
+
+// Category pages
+ProductSchema.index({ category: 1, deletedAt: 1 });
+
+// Category + sort
+ProductSchema.index({ category: 1, deletedAt: 1, createdAt: -1 });
+
+// Search
+ProductSchema.index({ title: "text", description: "text" });
 
 // Hot-reload safe model export (Next.js / serverless)
 const Product: Model<IProduct> =
