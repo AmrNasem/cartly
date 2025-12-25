@@ -53,6 +53,8 @@ const CartItemSchema = new Schema<ICartItem>(
   }
 );
 
+CartItemSchema.index({ productId: 1, cartId: 1 }, { unique: true });
+
 // Hot-reload safe model exports
 const Cart: Model<ICart> =
   (mongoose.models.Cart as Model<ICart>) ||
