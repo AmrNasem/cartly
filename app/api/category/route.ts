@@ -29,6 +29,22 @@ export async function POST(request: Request) {
       }
     );
   } catch (error) {
-    errorHandler(error);
+    return errorHandler(error);
+  }
+}
+
+export async function GET() {
+  try {
+    await requireAdmin();
+    await connectDB();
+    const categories = await Category.find();
+    return new Response(
+      JSON.stringify({
+        message: "Categories fetched successfully!",
+        payload: categories,
+      })
+    );
+  } catch (err) {
+    return errorHandler(err);
   }
 }

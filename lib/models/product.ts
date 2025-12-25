@@ -5,7 +5,7 @@ export interface IProductImage {
   url: string;
   alt?: string;
   order?: number;
-  publicId?: string;
+  publicId: string;
 }
 
 export interface IProduct extends Document {
@@ -20,6 +20,7 @@ export interface IProduct extends Document {
   createdBy: mongoose.Types.ObjectId;
   isPublished: boolean;
   images: IProductImage[];
+  deletedAt: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -57,6 +58,7 @@ const ProductSchema = new Schema<IProduct>(
     createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
     isPublished: { type: Boolean, default: false },
     images: { type: [ProductImageSchema], default: [] },
+    deletedAt: { type: Date, default: null },
   },
   {
     timestamps: true,

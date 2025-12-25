@@ -1,3 +1,8 @@
+/**
+ * Delete multiple images from Cloudinary by publicId
+ * @param publicIds - array of Cloudinary public IDs
+ */
+
 import { APIError } from "../api/errors";
 import { v2 as cloudinary } from "cloudinary";
 
@@ -62,5 +67,25 @@ export async function uploadImages(images: File[]) {
           .end(image.buffer);
       });
     })
+  );
+}
+
+export async function deleteImages(publicIds: string[]) {
+  if (!publicIds || !publicIds.length) return;
+
+  return Promise.all(
+    publicIds.map(
+      (publicId) =>
+        new Promise<void>((resolve, reject) => {
+          cloudinary.uploader.destroy(
+            publicId,
+            { resource_type: "image" },
+            (error) => {
+              if (error) return reject(error);
+              resolve();
+            }
+          );
+        })
+    )
   );
 }

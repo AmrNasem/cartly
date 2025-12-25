@@ -10,8 +10,8 @@ export async function POST(request: Request) {
   try {
     const session = await requireAdmin(true);
     const formData = await request.formData();
-    let productData;
 
+    let productData;
     try {
       productData = Object.fromEntries(formData.entries());
     } catch {
@@ -29,9 +29,12 @@ export async function POST(request: Request) {
     } = productData;
     const files = formData.getAll("images") as File[];
 
-    if (!title || !price || !categoryId) {
-      throw new APIError("Missing required fields", 400);
-    }
+    const requiredFields: string[] = [];
+    if (!title) requiredFields.push("Title");
+    if (!price) requiredFields.push("Price");
+    if (!categoryId) requiredFields.push("Category");
+    if (requiredFields.length > 0)
+      throw new APIError(`[${requiredFields}] required fields!`, 400);
 
     const error = validateImages(files);
     if (error) return errorHandler(error);
@@ -60,6 +63,21 @@ export async function POST(request: Request) {
       }
     );
   } catch (error) {
-    errorHandler(error);
+    return errorHandler(error);
+  }
+}
+
+export async function GET() {
+  try {
+    await connectDB();
+    const products = await Product.find({ deletedAt: null });
+    return new Response(
+      JSON.stringify({
+        message: "Products fetched successfully!",
+        payload: products,
+      })
+    );
+  } catch (err) {
+    return errorHandler(err);
   }
 }
