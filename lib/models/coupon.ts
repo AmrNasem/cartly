@@ -17,6 +17,8 @@ export interface ICoupon extends Document {
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
+  deletedAt: Date;
+  createdBy: mongoose.Types.ObjectId;
 }
 
 const CouponSchema = new Schema<ICoupon>(
@@ -26,7 +28,6 @@ const CouponSchema = new Schema<ICoupon>(
       required: true,
       trim: true,
       uppercase: true,
-      unique: true,
       index: true,
     },
     description: { type: String, default: "" },
@@ -43,10 +44,21 @@ const CouponSchema = new Schema<ICoupon>(
     endDate: { type: Date, default: null },
     minCartValue: { type: Number, default: null, min: 0 },
     isActive: { type: Boolean, default: true },
+    createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    deletedAt: { type: Date, default: null },
   },
   {
     timestamps: true,
     versionKey: false,
+  }
+);
+CouponSchema.index(
+  { code: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      deletedAt: null,
+    },
   }
 );
 
