@@ -16,6 +16,7 @@ export interface IProduct extends Document {
   price: number;
   compareAtPrice?: number;
   stock: number;
+  lowStockThreshold: number;
   categoryId: mongoose.Types.ObjectId;
   createdBy: mongoose.Types.ObjectId;
   isPublished: boolean;
@@ -50,6 +51,7 @@ const ProductSchema = new Schema<IProduct>(
     price: { type: Number, required: true, min: 0 },
     compareAtPrice: { type: Number, default: 0 },
     stock: { type: Number, default: 1 },
+    lowStockThreshold: { type: Number, default: 3 },
     categoryId: {
       type: Schema.Types.ObjectId,
       ref: "Category",

@@ -19,6 +19,7 @@ export interface ICoupon extends Document {
   updatedAt: Date;
   deletedAt: Date;
   createdBy: mongoose.Types.ObjectId;
+  calculateDiscount: (subtotal: number) => number;
 }
 
 const CouponSchema = new Schema<ICoupon>(
@@ -61,7 +62,29 @@ CouponSchema.index(
     },
   }
 );
+CouponSchema.methods.calculateDiscount = function (subtotal: number): number {
+  if (!this.isActive) return 0;
 
+  if (this.minCartValue && subtotal < this.minCartValue) {
+    return 0;
+  }
+
+  let discount = 0;
+
+  if (this.discountType === "percentage") {
+    discount = (subtotal * this.discountValue) / 100;
+  }
+
+  if (this.discountType === "fixed") {
+    discount = this.discountValue;
+  }
+
+  if (this.maxDiscount) {
+    discount = Math.min(discount, this.maxDiscount);
+  }
+
+  return Math.max(discount, 0);
+};
 // Hot-reload safe model export
 const Coupon: Model<ICoupon> =
   (mongoose.models.Coupon as Model<ICoupon>) ||
