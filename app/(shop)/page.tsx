@@ -1,5 +1,11 @@
+import Featured from "@/components/homepage/featured";
+
 function Home() {
-  return <main className="h-dvh">Home</main>;
+  return (
+    <main>
+      <Featured />
+    </main>
+  );
 }
 
 export default Home;
