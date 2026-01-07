@@ -7,10 +7,10 @@ async function Featured() {
   const products = await fetchFeaturedProducts();
 
   return (
-    <section className="mycontainer my-8 p-3">
-      <h1 className="text-foreground text-3xl mb-3 font-semibold text-center">
+    <section className="mycontainer my-8 py-3">
+      <h2 className="text-foreground text-3xl mb-3 font-semibold text-center">
         Featured Products
-      </h1>
+      </h2>
       <p className="text-muted-foreground text-center">
         Discover our most popular items, carefully selected for quality and
         style

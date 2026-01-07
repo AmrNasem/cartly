@@ -22,7 +22,7 @@ const links = [
 
 function Navbar() {
   return (
-    <header className="p-3 border-b z-100 border-gray-200 sticky top-0 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+    <header className="py-3 border-b z-100 border-gray-200 sticky top-0 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <nav className="mycontainer mx-auto flex justify-between gap-2 items-center">
         <div className="flex gap-2 items-center">
           <button className="md:hidden hover:bg-[#e9ebef] p-1 rounded-md duration-150 cursor-pointer">

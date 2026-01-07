@@ -30,7 +30,7 @@ function ProductCard({ product }: { product: ProductCardDTO }) {
         <Image
           src={product.thumbnail}
           fill
-          sizes="(max-width: 640px) 100vw, (max-width: 768px) 350px, 300px"
+          sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
           alt={product.title}
           className="object-cover block group-hover:scale-[1.03] duration-150 -z-10"
         />
