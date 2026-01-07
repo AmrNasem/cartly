@@ -5,7 +5,6 @@ import SectionSekeleton from "./SectionSekeleton";
 
 async function Featured() {
   const products = await fetchFeaturedProducts();
-  console.log(products);
 
   return (
     <section className="mycontainer my-8 p-3">
