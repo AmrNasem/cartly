@@ -22,7 +22,7 @@ function Hero() {
               <span>Join Us</span>
             </button>
           </div>
-          <div className="flex items-center gap-6 my-10">
+          <div className="flex items-center justify-evenly sm:justify-start gap-6 my-10">
             <div>
               <h2 className="text-[1.3rem] text-primary font-bold">50K+</h2>
               <p className="text-[12px] text-muted-foreground">
