@@ -29,7 +29,6 @@ const CouponSchema = new Schema<ICoupon>(
       required: true,
       trim: true,
       uppercase: true,
-      index: true,
     },
     description: { type: String, default: "" },
     discountType: {

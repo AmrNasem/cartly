@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Cartly – Modern E-commerce Store",
+  title: {
+    default: "Cartly – Modern E-commerce Store",
+    template: "%s | Cartly",
+  },
   description:
     "Cartly is a modern e-commerce platform offering quality products, secure payments, fast checkout, and a seamless shopping experience.",
 };

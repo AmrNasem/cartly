@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "Cartly | Homepage",
+  title: "Homepage",
 };
 
 function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
