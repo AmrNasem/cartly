@@ -1,5 +1,6 @@
 import { ArrowRight, Star } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 function Hero() {
   return (
@@ -18,9 +19,9 @@ function Hero() {
               <span>Shop Now</span>
               <ArrowRight className="duration-150 group-hover:translate-x-1 size-4" />
             </button>
-            <button className="font-semibold text-[12px] text-center py-2 px-5 cursor-pointer rounded-md text-foreground bg-white duration-150 hover:bg-accent hover:text-accent-foreground border border-black/10">
-              <span>Join Us</span>
-            </button>
+            <Link href="/signup" className="font-semibold text-[12px] text-center py-2 px-5 cursor-pointer rounded-md text-foreground bg-white duration-150 hover:bg-accent hover:text-accent-foreground border border-black/10">
+              <span>Sign Up</span>
+            </Link>
           </div>
           <div className="flex items-center justify-evenly sm:justify-start gap-6 my-10">
             <div>

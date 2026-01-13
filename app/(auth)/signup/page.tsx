@@ -11,7 +11,7 @@ import {
   AlertCircle,
   ArrowRight,
 } from "lucide-react";
-import { handleSignup } from "@/actions/user.action";
+import { handleSignup } from "@/lib/services/user.service";
 
 export default function SignupPage() {
   const [error, formAction, isPending] = useActionState(handleSignup, "");

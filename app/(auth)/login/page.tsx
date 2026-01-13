@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import Link from "next/link";
 import { signIn } from "@/lib/auth/auth-client";
 import { Loader2, Mail, Lock, AlertCircle, ArrowRight } from "lucide-react";
-import { handleLogin } from "@/actions/user.action";
+import { handleLogin } from "@/lib/services/user.service";
 
 export default function LoginPage() {
   const [error, formAction, isPending] = useActionState(handleLogin, "");

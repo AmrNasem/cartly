@@ -1,3 +1,4 @@
+import { AuthUser } from "@/lib/auth/types";
 import { Menu, Search, ShoppingCart, User } from "lucide-react";
 import Link from "next/link";
 
@@ -20,7 +21,9 @@ const links = [
   },
 ];
 
-function Navbar() {
+function Navbar({ user }: { user: AuthUser | null }) {
+  console.log(user);
+
   return (
     <header className="py-3 border-b z-100 border-gray-200 sticky top-0 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <nav className="mycontainer mx-auto flex justify-between gap-2 items-center">
@@ -67,9 +70,18 @@ function Navbar() {
           <button className="sm:hidden hover:bg-[#e9ebef] p-1 rounded-md duration-150 cursor-pointer">
             <Search className="size-4 text-foreground" />
           </button>
-          <button className=" hover:bg-[#e9ebef] p-1 rounded-md duration-150 cursor-pointer">
-            <User className="size-4 text-foreground" />
-          </button>
+          {user ? (
+            <button className=" hover:bg-[#e9ebef] p-1 rounded-md duration-150 cursor-pointer">
+              <User className="size-4 text-foreground" />
+            </button>
+          ) : (
+            <Link
+              href="/login"
+              className="group font-semibold text-[12px] py-1 px-2 cursor-pointer rounded-md text-white bg-primary duration-150 hover:bg-primary/85"
+            >
+              Login
+            </Link>
+          )}
           <button className=" hover:bg-[#e9ebef] p-1 rounded-md duration-150 cursor-pointer">
             <ShoppingCart className="size-4 text-foreground" />
           </button>
