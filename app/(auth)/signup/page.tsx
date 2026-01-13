@@ -1,51 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { signUp, signIn } from "@/lib/auth/auth-client";
-import { Loader2, Mail, Lock, User, AlertCircle, ArrowRight } from "lucide-react";
+import { signIn } from "@/lib/auth/auth-client";
+import {
+  Loader2,
+  Mail,
+  Lock,
+  User,
+  AlertCircle,
+  ArrowRight,
+} from "lucide-react";
+import { handleSignup } from "@/actions/user.action";
 
 export default function SignupPage() {
-  const router = useRouter();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    await signUp.email({
-      email,
-      password,
-      name,
-      callbackURL: "/",
-      fetchOptions: {
-        onResponse: () => {
-          setLoading(false);
-        },
-        onRequest: () => {
-          setLoading(true);
-        },
-        onError: (ctx) => {
-           setError(ctx.error.message);
-           setLoading(false);
-        },
-        onSuccess: async () => {
-            router.push("/");
-        }
-      }
-    });
-  };
+  const [error, formAction, isPending] = useActionState(handleSignup, "");
 
   const handleGoogleSignIn = async () => {
     await signIn.social({
-        provider: "google",
-        callbackURL: "/",
+      provider: "google",
+      callbackURL: "/",
     });
   };
 
@@ -88,88 +62,99 @@ export default function SignupPage() {
         </button>
 
         <div className="relative my-8">
-            <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-zinc-200 dark:border-zinc-800"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-white dark:bg-zinc-950 text-zinc-400 dark:text-zinc-500 font-medium">Or continue with email</span>
-            </div>
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-zinc-200 dark:border-zinc-800"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-4 bg-white dark:bg-zinc-950 text-zinc-400 dark:text-zinc-500 font-medium">
+              Or continue with email
+            </span>
+          </div>
         </div>
 
-        <form onSubmit={handleSignup} className="space-y-4">
+        <form action={formAction} className="space-y-4">
           {error && (
             <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/50 flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
-                <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
+              <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
             </div>
           )}
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 block">Full Name</label>
-             <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors group-focus-within:text-blue-600 dark:group-focus-within:text-blue-400 text-zinc-400">
-                    <User className="h-5 w-5" />
-                </div>
-                <input
-                    type="text"
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="John Doe"
-                    className="block w-full pl-10 h-11 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-lg focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 focus:border-blue-500 dark:focus:border-blue-500 transition-all text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 outline-none"
-                    autoComplete="name"
-                />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 block">Email Address</label>
+            <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 block">
+              Full Name
+            </label>
             <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors group-focus-within:text-blue-600 dark:group-focus-within:text-blue-400 text-zinc-400">
-                    <Mail className="h-5 w-5" />
-                </div>
-                <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@example.com"
-                    className="block w-full pl-10 h-11 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-lg focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 focus:border-blue-500 dark:focus:border-blue-500 transition-all text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 outline-none"
-                    autoComplete="email"
-                />
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors group-focus-within:text-blue-600 dark:group-focus-within:text-blue-400 text-zinc-400">
+                <User className="h-5 w-5" />
+              </div>
+              <input
+                type="text"
+                name="name"
+                required
+                // value={name}
+                // onChange={(e) => setName(e.target.value)}
+                placeholder="John Doe"
+                className="block w-full pl-10 h-11 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-lg focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 focus:border-blue-500 dark:focus:border-blue-500 transition-all text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 outline-none"
+                autoComplete="name"
+              />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 block">Password</label>
-             <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors group-focus-within:text-blue-600 dark:group-focus-within:text-blue-400 text-zinc-400">
-                    <Lock className="h-5 w-5" />
-                </div>
-                <input
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="block w-full pl-10 h-11 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-lg focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 focus:border-blue-500 dark:focus:border-blue-500 transition-all text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 outline-none"
-                    autoComplete="new-password"
-                />
+            <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 block">
+              Email Address
+            </label>
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors group-focus-within:text-blue-600 dark:group-focus-within:text-blue-400 text-zinc-400">
+                <Mail className="h-5 w-5" />
+              </div>
+              <input
+                type="email"
+                name="email"
+                required
+                // value={email}
+                // onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="block w-full pl-10 h-11 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-lg focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 focus:border-blue-500 dark:focus:border-blue-500 transition-all text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 outline-none"
+                autoComplete="email"
+              />
             </div>
           </div>
-          
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 block">
+              Password
+            </label>
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors group-focus-within:text-blue-600 dark:group-focus-within:text-blue-400 text-zinc-400">
+                <Lock className="h-5 w-5" />
+              </div>
+              <input
+                type="password"
+                name="password"
+                required
+                // value={password}
+                // onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="block w-full pl-10 h-11 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-lg focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 focus:border-blue-500 dark:focus:border-blue-500 transition-all text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 outline-none"
+                autoComplete="new-password"
+              />
+            </div>
+          </div>
+
           <button
             type="submit"
-            disabled={loading}
+            disabled={isPending}
             className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 disabled:opacity-70 disabled:cursor-not-allowed mt-6 group"
           >
-            {loading ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
+            {isPending ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
-                <>
-                    Create Account
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </>
+              <>
+                Create Account
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </>
             )}
           </button>
         </form>
@@ -177,10 +162,13 @@ export default function SignupPage() {
 
       <div className="bg-zinc-50 dark:bg-zinc-900/50 p-6 border-t border-zinc-200 dark:border-zinc-800 text-center">
         <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            Already have an account?{" "}
-            <Link href="/login" className="text-blue-600 dark:text-blue-400 font-medium hover:underline hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
-                Sign in
-            </Link>
+          Already have an account?{" "}
+          <Link
+            href="/login"
+            className="text-blue-600 dark:text-blue-400 font-medium hover:underline hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+          >
+            Sign in
+          </Link>
         </p>
       </div>
     </div>

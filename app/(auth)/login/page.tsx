@@ -1,42 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { signIn } from "@/lib/auth/auth-client";
 import { Loader2, Mail, Lock, AlertCircle, ArrowRight } from "lucide-react";
+import { handleLogin } from "@/actions/user.action";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    await signIn.email({
-      email,
-      password,
-      fetchOptions: {
-        onResponse: () => {
-          setLoading(false);
-        },
-        onRequest: () => {
-          setLoading(true);
-        },
-        onError: (ctx) => {
-          setError(ctx.error.message);
-        },
-        onSuccess: async () => {
-          router.push("/");
-        },
-      },
-    });
-  };
+  const [error, formAction, isPending] = useActionState(handleLogin, "");
 
   const handleGoogleSignIn = async () => {
     await signIn.social({
@@ -93,7 +64,7 @@ export default function LoginPage() {
             </span>
           </div>
         </div>
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form action={formAction} className="space-y-4">
           {error && (
             <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/50 flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
@@ -111,9 +82,10 @@ export default function LoginPage() {
               </div>
               <input
                 type="email"
+                name="email"
                 required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                // value={email}
+                // onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 className="block w-full pl-10 h-11 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-lg focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 focus:border-blue-500 dark:focus:border-blue-500 transition-all text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 outline-none"
                 autoComplete="email"
@@ -131,9 +103,10 @@ export default function LoginPage() {
               </div>
               <input
                 type="password"
+                name="password"
                 required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                // value={password}
+                // onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 className="block w-full pl-10 h-11 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-lg focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 focus:border-blue-500 dark:focus:border-blue-500 transition-all text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 outline-none"
                 autoComplete="new-password"
@@ -143,10 +116,10 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={isPending}
             className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 disabled:opacity-70 disabled:cursor-not-allowed mt-6 group"
           >
-            {loading ? (
+            {isPending ? (
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
               <>
