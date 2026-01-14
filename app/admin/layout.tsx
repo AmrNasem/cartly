@@ -1,14 +1,11 @@
 import { requireAdmin } from "@/lib/auth/guards";
-import { Metadata } from "next";
 import React from "react";
-
-export const metadata: Metadata = {
-  title: "Admin - %s",
-};
+import { AdminShell } from "@/components/admin/admin-shell";
 
 async function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
-  await requireAdmin();
-  return <>{children}</>;
+  const session = await requireAdmin();
+  console.log(session);
+  return <AdminShell user={session.user}>{children}</AdminShell>;
 }
 
 export default Layout;

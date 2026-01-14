@@ -1,6 +1,16 @@
 import { AuthUser } from "@/lib/auth/types";
-import { Menu, Search, ShoppingCart, User } from "lucide-react";
+import { Menu, Search, ShoppingCart } from "lucide-react";
 import Link from "next/link";
+import { Button } from "../ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 const links = [
   {
@@ -70,10 +80,51 @@ function Navbar({ user }: { user: AuthUser | null }) {
           <button className="sm:hidden hover:bg-[#e9ebef] p-1 rounded-md duration-150 cursor-pointer">
             <Search className="size-4 text-foreground" />
           </button>
+
+          <button className=" hover:bg-[#e9ebef] p-1 rounded-md duration-150 cursor-pointer">
+            <ShoppingCart className="size-4 text-foreground" />
+          </button>
           {user ? (
-            <button className=" hover:bg-[#e9ebef] p-1 rounded-md duration-150 cursor-pointer">
-              <User className="size-4 text-foreground" />
-            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="rounded-full border border-black/5 p-0 flex items-center justify-center"
+                >
+                  <Avatar className="h-7 w-7">
+                    <AvatarImage src={user.image} alt={user.name} />
+                    <AvatarFallback>
+                      {user.name
+                        .split(" ")
+                        .slice(0, 2)
+                        .map((name) => name[0].toUpperCase())}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="z-100">
+                <DropdownMenuLabel className="flex flex-col">
+                  <span className="text-xs font-medium">{user.name}</span>
+                  <span className="text-[11px] text-muted-foreground">
+                    {user.email}
+                  </span>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <Link href="/admin" className="font-semibold">
+                  <DropdownMenuItem className="text-xs">
+                    Admin View
+                  </DropdownMenuItem>
+                </Link>
+                <DropdownMenuItem className="text-xs">
+                  Account settings
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="text-xs text-destructive focus:bg-destructive/10">
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
             <Link
               href="/login"
@@ -82,9 +133,6 @@ function Navbar({ user }: { user: AuthUser | null }) {
               Login
             </Link>
           )}
-          <button className=" hover:bg-[#e9ebef] p-1 rounded-md duration-150 cursor-pointer">
-            <ShoppingCart className="size-4 text-foreground" />
-          </button>
         </div>
       </nav>
     </header>

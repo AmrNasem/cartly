@@ -1,8 +1,9 @@
 import { CartItem, Order, Product } from "@/lib/models";
 import { mapProductCardDTO } from "@/lib/mappers/product.mapper";
+import { redirect } from "next/navigation";
 
 export async function getFeaturedProducts(limit = 8) {
-  const products = await Product.find({ deletedAt: null })
+  const products = await Product.find({ deletedAt: null, isPublished: true })
     .sort({ createdAt: -1 })
     .limit(limit)
     .lean();
@@ -53,7 +54,7 @@ export async function getRecommendedProducts(userId: string, limit = 12) {
     categoryId: { $in: recommendedCategories },
     _id: { $nin: Array.from(excludedProductIds) },
     deletedAt: null,
-    // isPublished: true,
+    isPublished: true,
     stock: { $gt: 0 },
   })
     .sort({ averageRate: -1, createdAt: -1 }) // prioritize popular and new products

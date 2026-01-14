@@ -35,6 +35,10 @@
 .mycontainer {
   @apply mx-auto px-3 sm:max-w-160 md:max-w-3xl lg:max-w-5xl xl:max-w-7xl;
 }
+
+.btn-primary {
+  @apply font-semibold text-[12px] py-1 px-2 cursor-pointer rounded-md text-white bg-primary duration-150 hover:bg-primary/90;
+}
 /* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;

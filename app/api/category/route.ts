@@ -35,7 +35,6 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-    await requireAdmin();
     await connectDB();
     const categories = await Category.find();
     return new Response(

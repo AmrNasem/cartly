@@ -35,8 +35,7 @@ export const auth = betterAuth({
       },
       image: {
         type: "string",
-        defaultValue:
-          "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
+        defaultValue: null,
       },
     },
   },
