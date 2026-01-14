@@ -8,7 +8,7 @@ export async function requireAuth(error = false): Promise<Session> {
 
   if (!session) {
     if (error) throw new AuthError("You must login first!");
-    redirect("/login");
+    redirect("/");
   }
 
   return session;
