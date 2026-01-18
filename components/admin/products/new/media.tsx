@@ -11,12 +11,12 @@ function Media({
   images,
   addImages,
   isValid,
-  removeImage
+  removeImage,
 }: {
   images: ProductImageForm[];
-    addImages: (files: File[] | null) => void;
+  addImages: (files: File[] | null) => void;
   isValid: boolean;
-    removeImage: (index: number) => void;
+  removeImage: (index: number) => void;
 }) {
   const [, setIsDragging] = useState(false);
 

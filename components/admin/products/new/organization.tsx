@@ -15,6 +15,7 @@ import { memo, useState } from "react";
 
 function Organization({
   updateField,
+  touchField,
   categories,
   error,
   isValid,
@@ -23,6 +24,7 @@ function Organization({
     key: K,
     value: ProductFormState[K]
   ) => void;
+  touchField: (key: string) => void;
   categories?: categoryDTO[];
   error: string;
   isValid: boolean;
@@ -61,6 +63,7 @@ function Organization({
                       return newPath;
                     });
                     updateField("categoryId", value);
+                    touchField("categoryId")
                   }}
                 >
                   <SelectTrigger id="category">

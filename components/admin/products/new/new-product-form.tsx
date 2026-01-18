@@ -13,12 +13,10 @@ import { categoryDTO } from "@/lib/types/category.types";
 import Media from "./media";
 import Link from "next/link";
 import { MAX_IMGS_ALLOWED } from "@/lib/utils/constants";
-import { router } from "better-auth/api";
 import { useRouter } from "next/navigation";
-import { Loader2, LucideLoader2 } from "lucide-react";
-// import { createProduct } from "@/lib/services/product.service";
+import { Loader2 } from "lucide-react";
 
-export async function createProduct(formData: FormData, callback: () => void) {
+async function createProduct(formData: FormData, callback: () => void) {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/product`, {
       method: "POST",
@@ -53,16 +51,12 @@ export default function NewProductForm({
     isPublished: false,
     images: [],
   });
-  const [formValidation, setFormValidation] = useState({
-    title: true,
-    price: true,
-    images: true,
-    categoryId: true,
-  });
+  
+  const [touched, setTouched] = useState({images: false, title: false, price: false, categoryId: false})
   const router = useRouter();
 
-  const hasChildren = (categoryId: string): boolean =>
-    !!categories?.find((category) => category.parentId === categoryId);
+  const hasChildren = useCallback((categoryId: string): boolean =>
+    !!categories?.find((category) => category.parentId === categoryId), [categories]);
 
   const updateField = useCallback(
     <K extends keyof ProductFormState>(key: K, value: ProductFormState[K]) => {
@@ -71,15 +65,25 @@ export default function NewProductForm({
     []
   );
 
-  const validateMedia = useCallback(() => {
-    console.log(form.images);
+  const touchField = useCallback((key: string) => {
+    if (!(key === "categoryId" && form.categoryId && !hasChildren(form.categoryId))) return;
+    setTouched(prev => ({ ...prev, [key]: true }))
+  }, [
+    form.categoryId, hasChildren
+  ]);
 
-    setFormValidation((prev) => ({
-      ...prev,
+  const validate = (key?: (keyof typeof touched)) => {
+    const validations: Record<keyof typeof touched, boolean> = {
+      title: form.title.trim().length > 2,
+      price: Number(form.price) > 0,
       images: form.images.length > 0 && form.images.length <= 8,
-    }));
-  }, [form.images]);
+      categoryId: !!form.categoryId.trim() && !hasChildren(form.categoryId)
+    }
 
+    return key ? validations[key] : !Object.values(validations).some(input => !input);
+  }
+
+  // const isMediaValid = form.images.length > 0 && form.images.length <= 8;
   const addImages = useCallback(
     (files: File[] | null) => {
       if (!files?.length) return;
@@ -94,14 +98,14 @@ export default function NewProductForm({
 
       if (newImages?.length === 0) return;
 
+      setTouched(prev => ({ ...prev, images: true }));
       setForm((prev: ProductFormState) => ({
         ...prev,
         images: [...prev.images, ...newImages],
       }));
 
-      validateMedia();
     },
-    [validateMedia, form.images]
+    [form.images]
   );
 
   const removeImage = useCallback(
@@ -114,23 +118,14 @@ export default function NewProductForm({
         };
       });
 
-      validateMedia();
     },
-    [validateMedia]
+    []
   );
 
   async function handleSubmit() {
-    // TODO: Integrate with real create-product action and backend validation.
-    const newValidation = { ...formValidation };
-    newValidation.title = form.title.trim().length > 2;
-    newValidation.price = !!Number(form.price);
-    newValidation.images = form.images.length > 0 && form.images.length <= 8;
-    newValidation.categoryId =
-      !!form.categoryId.trim() && !hasChildren(form.categoryId.trim());
-
-    setFormValidation(newValidation);
-
-    if (Object.values(newValidation).some((v) => !v)) return;
+    
+    setTouched(prev => Object.keys(prev).reduce((acc, key) => ({...acc, [key]: true}), prev))
+    if (!validate()) return;
 
     const formData = new FormData();
     const { images, isPublished, ...restForm } = form;
@@ -193,9 +188,10 @@ export default function NewProductForm({
                   placeholder="e.g. Minimal wooden chair"
                   value={form.title}
                   className={
-                    !formValidation.title ? "border-destructive bg-red-50" : ""
+                    touched.title && !validate("title") ? "border-destructive bg-red-50" : ""
                   }
                   onChange={(event) => updateField("title", event.target.value)}
+                  onBlur={() => touchField("title")}
                 />
                 <p className="text-[11px] text-muted-foreground">
                   This is the main name shown to customers.
@@ -238,9 +234,11 @@ export default function NewProductForm({
                   placeholder="0.00"
                   value={form.price}
                   className={
-                    !formValidation.price ? "border-destructive bg-red-50" : ""
+                    (touched.price && !validate("price")) ? "border-destructive bg-red-50" : ""
                   }
                   onChange={(event) => updateField("price", event.target.value)}
+                  onBlur={() => touchField("price")}
+
                 />
                 <p className="text-[11px] text-muted-foreground">
                   The price customers will pay at checkout.
@@ -325,12 +323,13 @@ export default function NewProductForm({
             images={form.images}
             addImages={addImages}
             removeImage={removeImage}
-            isValid={formValidation.images}
+            isValid={!touched.images || validate("images")}
           />
           <Organization
-            isValid={formValidation.categoryId}
+            isValid={!touched.categoryId || validate("categoryId")}
             error={categoriesError}
             updateField={updateField}
+            touchField={touchField}
             categories={categories}
           />
 
