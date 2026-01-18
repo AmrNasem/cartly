@@ -1,9 +1,4 @@
-"use client";
-
 import { Menu, Search } from "lucide-react";
-import { usePathname } from "next/navigation";
-
-import { adminNavItems } from "./nav-items";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,20 +20,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AdminSidebar } from "./sidebar";
 import { AuthUser } from "@/lib/auth/types";
 import Link from "next/link";
-
-function getPageTitle(pathname: string) {
-  const item = adminNavItems.find((item) =>
-    item.href === "/admin"
-      ? pathname === "/admin"
-      : pathname.startsWith(item.href)
-  );
-  return item?.label ?? "Dashboard";
-}
+import LogoutButton from "../auth/logout-button";
+import AdminPageTitle from "./admin-page-title";
 
 export function AdminHeader({ user }: { user: AuthUser }) {
-  const pathname = usePathname();
-  const title = getPageTitle(pathname);
-
   return (
     <header className="sticky top-0 z-30 border-b border-black/5 bg-background/80 backdrop-blur">
       <div className="mycontainer flex items-center gap-3 py-3">
@@ -66,7 +51,7 @@ export function AdminHeader({ user }: { user: AuthUser }) {
             </Sheet>
           </div>
           <div>
-            <h1 className="text-lg font-semibold">{title}</h1>
+            <AdminPageTitle />
             <p className="text-xs text-muted-foreground">
               Manage your store and keep everything in sync.
             </p>
@@ -125,9 +110,11 @@ export function AdminHeader({ user }: { user: AuthUser }) {
                 Account settings
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-xs text-destructive focus:bg-destructive/10">
-                Logout
-              </DropdownMenuItem>
+              <LogoutButton callbackURL="/" className="block w-full">
+                <DropdownMenuItem className="text-xs text-destructive focus:bg-destructive/10">
+                  Logout
+                </DropdownMenuItem>
+              </LogoutButton>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

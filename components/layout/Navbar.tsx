@@ -11,6 +11,8 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import Guard from "./guard";
+import LogoutButton from "../auth/logout-button";
 
 const links = [
   {
@@ -111,18 +113,22 @@ function Navbar({ user }: { user: AuthUser | null }) {
                   </span>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <Link href="/admin" className="font-semibold">
-                  <DropdownMenuItem className="text-xs">
-                    Admin View
-                  </DropdownMenuItem>
-                </Link>
+                <Guard roles={["admin", "super_admin"]}>
+                  <Link href="/admin" className="font-semibold">
+                    <DropdownMenuItem className="text-xs">
+                      Admin View
+                    </DropdownMenuItem>
+                  </Link>
+                </Guard>
                 <DropdownMenuItem className="text-xs">
                   Account settings
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-xs text-destructive focus:bg-destructive/10">
-                  Logout
-                </DropdownMenuItem>
+                <LogoutButton className="block w-full">
+                  <DropdownMenuItem className="text-xs text-destructive focus:bg-destructive/10">
+                    Logout
+                  </DropdownMenuItem>
+                </LogoutButton>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
