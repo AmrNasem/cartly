@@ -1,6 +1,7 @@
-import { CartItem, Order, Product } from "@/lib/models";
+import { CartItem, Category, Order, Product } from "@/lib/models";
 import { mapProductCardDTO } from "@/lib/mappers/product.mapper";
-import { redirect } from "next/navigation";
+import { enrichProducts } from "../product/enrich-product";
+import { queryOptions } from "../types/product.types";
 
 export async function getFeaturedProducts(limit = 8) {
   const products = await Product.find({ deletedAt: null, isPublished: true })
@@ -76,4 +77,48 @@ export async function getRecommendedProducts(userId: string, limit = 12) {
   }
 
   return recommendedProducts.map((product) => mapProductCardDTO(product));
+}
+
+export async function getProducts(options: queryOptions = {}) {
+  const { limit, page, categorySlug, search } = options;
+  const boundedLimit = Math.min(Number(limit) || 12, 50);
+  const boundedPage = Math.max(Number(page) || 1, 1);
+  const skip = (boundedPage - 1) * boundedLimit;
+
+  const query: Record<string, any> = {
+    deletedAt: null,
+  };
+
+  if (search) query.$text = { $search: search };
+
+  if (categorySlug) {
+    const category = await Category.findOne({ slug: categorySlug });
+    if (category) query.categoryId = category._id;
+  }
+
+  const [products, total] = await Promise.all([
+    Product.find(query)
+      .populate(["categoryId"])
+      .sort({ createdAt: -1 })
+      .limit(boundedLimit)
+      .skip(skip)
+      .lean(),
+    Product.countDocuments(query),
+  ]);
+
+  const enrichedProducts = await enrichProducts(products);
+
+  const totalPages = Math.ceil(total / boundedLimit);
+
+  return {
+    products: enrichedProducts,
+    meta: {
+      page: boundedPage,
+      limit: boundedLimit,
+      total,
+      totalPages,
+      hasNextPage: totalPages > boundedPage,
+      hasPrevPage: boundedPage > 1,
+    },
+  };
 }

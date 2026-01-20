@@ -4,8 +4,10 @@ import { getSession } from "@/lib/auth/session";
 import { connectDB } from "@/lib/db";
 import {
   getFeaturedProducts,
+  getProducts,
   getRecommendedProducts,
 } from "@/lib/services/product.service";
+import { queryOptions } from "@/lib/types/product.types";
 
 export async function fetchFeaturedProducts(limit = 8) {
   await connectDB();
@@ -19,4 +21,9 @@ export async function fetchRecommendedProducts(limit = 8) {
   if (!session) return [];
 
   return getRecommendedProducts(session.user.id, limit);
+}
+
+export async function fetchProducts(options: queryOptions = {}) {
+  await connectDB();
+  return getProducts(options);
 }

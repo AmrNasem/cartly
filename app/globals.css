@@ -33,7 +33,7 @@
 }
 
 .mycontainer {
-  @apply mx-auto px-3 sm:max-w-160 md:max-w-3xl lg:max-w-5xl xl:max-w-7xl;
+  @apply mx-auto px-3 max-w-full sm:max-w-160 md:max-w-3xl lg:max-w-5xl xl:max-w-7xl;
 }
 
 .btn-primary {

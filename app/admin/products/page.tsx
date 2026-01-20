@@ -12,52 +12,19 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Metadata } from "next";
 import Link from "next/link";
+import { fetchProducts } from "@/actions/product.action";
+import { Edit, Trash } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Manage Products",
 };
 
-const products = [
-  {
-    id: "P-1001",
-    name: "Minimal Chair",
-    price: "$129.00",
-    stock: 34,
-    status: "Active",
-    image: "/images/collection.jpeg",
-  },
-  {
-    id: "P-1002",
-    name: "Soft Cotton Hoodie",
-    price: "$89.00",
-    stock: 12,
-    status: "Low stock",
-    image: "/images/collection.jpeg",
-  },
-  {
-    id: "P-1003",
-    name: "Wireless Earbuds",
-    price: "$149.00",
-    stock: 0,
-    status: "Out of stock",
-    image: "/images/collection.jpeg",
-  },
-];
+const getProductStatusVariant = (stock: number, lowStockThreshold: number): { text: string; variant: "destructive" | "warning" | "default" } =>
+  stock === 0 ? { text: "Out of stock", variant: "destructive" } : stock <= lowStockThreshold ? { text: `Low stock (${stock})`, variant: "warning" } : { text: `${stock} in stock`, variant: "default" };
 
-function getProductStatusVariant(status: string) {
-  switch (status) {
-    case "Active":
-      return "success" as const;
-    case "Low stock":
-      return "warning" as const;
-    case "Out of stock":
-      return "destructive" as const;
-    default:
-      return "default" as const;
-  }
-}
+export default async function ProductsPage() {
+  const { products } = await fetchProducts();
 
-export default function ProductsPage() {
   return (
     <div className="space-y-4 md:space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -83,52 +50,69 @@ export default function ProductsPage() {
             {products.length} products
           </span>
         </CardHeader>
-        <CardContent className="pt-3">
-          <Table>
+        <CardContent className="pt-3 max-h-dvh">
+          <Table className="">
             <TableHeader>
               <TableRow>
                 <TableHead>Product</TableHead>
                 <TableHead>Price</TableHead>
-                <TableHead>Stock</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead className="text-center">Stock</TableHead>
+                <TableHead className="text-center">Status</TableHead>
+                <TableHead className="text-center">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {products.map((product) => (
-                <TableRow key={product.id}>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <div className="relative h-10 w-10 overflow-hidden rounded-md bg-muted">
-                        {/* TODO: Replace with real product thumbnails */}
-                        <Image
-                          src={product.image}
-                          alt={product.name}
-                          fill
-                          sizes="40px"
-                          className="object-cover"
-                        />
+              {products.map((product) => {
+                const stock = getProductStatusVariant(product.stock, product.lowStockThreshold)
+                return (
+                  <TableRow key={product._id.toString()}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <div className="relative h-10 w-10 min-w-10 overflow-hidden rounded-md bg-muted">
+                          {/* TODO: Replace with real product thumbnails */}
+                          <Image
+                            src={product.images[0]?.url || ""}
+                            alt={product.title}
+                            fill
+                            sizes="40px"
+                            className="object-cover w-full block"
+                          />
+                        </div>
+                        <div className="space-y-0.5">
+                          <p className="text-sm font-medium line-clamp-2">{product.title}</p>
+                          <p className="text-[11px] text-muted-foreground line-clamp-1 max-w-3/4" title={product.description}>
+                            {product.description}
+                          </p>
+                        </div>
                       </div>
-                      <div className="space-y-0.5">
-                        <p className="text-sm font-medium">{product.name}</p>
-                        <p className="text-[11px] text-muted-foreground">
-                          {product.id}
-                        </p>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-col">
+                        <span>{product.price}$</span>
+                        {
+                          product.compareAtPrice &&
+                          <span className="text-[12px] line-through text-muted-foreground">{product.compareAtPrice}$</span>
+                        }
                       </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>{product.price}</TableCell>
-                  <TableCell>
-                    <span className="text-xs text-muted-foreground">
-                      {product.stock} in stock
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={getProductStatusVariant(product.status)}>
-                      {product.status}
-                    </Badge>
-                  </TableCell>
-                </TableRow>
-              ))}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={stock.variant} className="block mx-auto w-fit text-nowrap">
+                        {stock.text}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <span className={`font-semibold text-center block ${product.isPublished ? "text-emerald-600" : "text-muted-foreground"}`}>{product.isPublished ? "Published" : "Draft"}</span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex gap-1 items-center">
+                        <Link href="/admin/product/edit" className="px-2 py-1 text-emerald-700 cursor-pointer duration-150 hover:bg-emerald-50"><Edit className="size-4" /></Link>
+                        <button className="px-2 py-1 text-destructive cursor-pointer duration-150 hover:bg-red-50"><Trash className="size-4" /></button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )
+              }
+              )}
             </TableBody>
           </Table>
         </CardContent>

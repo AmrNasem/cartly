@@ -2,9 +2,9 @@ import { errorHandler } from "@/lib/api/error-handler";
 import { APIError } from "@/lib/api/errors";
 import { requireAdmin } from "@/lib/auth/guards";
 import { connectDB } from "@/lib/db";
-import { Category, Product } from "@/lib/models";
-import { enrichProducts } from "@/lib/product/enrich-product";
+import { Product } from "@/lib/models";
 import { uploadImages, validateImages } from "@/lib/product/upload-images";
+import { getProducts } from "@/lib/services/product.service";
 import { createUniqueSlug } from "@/lib/utils/slug";
 
 export async function POST(request: Request) {
@@ -71,53 +71,15 @@ export async function POST(request: Request) {
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const limit = Math.min(Number(searchParams.get("limit")) || 12, 50);
-    const page = Math.max(Number(searchParams.get("page")) || 1, 1);
-    const skip = (page - 1) * limit;
-    const categorySlug = searchParams.get("category");
-    const search = searchParams.get("search");
-
-    const query: Record<string, any> = {
-      deletedAt: null,
-    };
-
-    if (search) query.$text = { $search: search };
 
     await connectDB();
-
-    if (categorySlug) {
-      const category = await Category.findOne({ slug: categorySlug });
-      if (category) query.categoryId = category._id;
-    }
-
-    const [products, total] = await Promise.all([
-      Product.find(query)
-        .populate(["categoryId"])
-        .sort({ createdAt: -1 })
-        .limit(limit)
-        .skip(skip)
-        .lean(),
-      Product.countDocuments(query),
-    ]);
-
-    const enrichedProducts = await enrichProducts(products);
-
-    const totalPages = Math.ceil(total / limit);
+    const options = Object.fromEntries(Array.from(searchParams).filter(([, value]) => value ?? false))
+    const payload = await getProducts(options)
 
     return new Response(
       JSON.stringify({
         message: "Products fetched successfully!",
-        payload: {
-          products: enrichedProducts,
-          meta: {
-            page,
-            limit,
-            total,
-            totalPages,
-            hasNextPage: totalPages > page,
-            hasPrevPage: page > 1,
-          },
-        },
+        payload,
       })
     );
   } catch (err) {

@@ -21,6 +21,7 @@ export interface IProduct extends Document {
   numOfReviews: number;
   categoryId: mongoose.Types.ObjectId;
   createdBy: mongoose.Types.ObjectId;
+  lastUpdatedBy: mongoose.Types.ObjectId;
   isPublished: boolean;
   images: IProductImage[];
   deletedAt: Date;
@@ -62,6 +63,7 @@ const ProductSchema = new Schema<IProduct>(
       require: true,
     },
     createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    lastUpdatedBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
     isPublished: { type: Boolean, default: true },
     images: { type: [ProductImageSchema], default: [] },
     deletedAt: { type: Date, default: null },

@@ -8,7 +8,7 @@ export const handleLogin = async (error: string, formData: FormData) => {
       password: formData.get("password") as string,
     });
     console.log(res);
-    // if (res.error) throw Error(res.error.message);
+    if (res.error) throw Error(res.error.message);
   } catch (err) {
     return err instanceof Error ? err.message : "Unable to login!";
   }

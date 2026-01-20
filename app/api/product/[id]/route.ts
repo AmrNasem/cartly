@@ -68,7 +68,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdmin(true);
+    const session = await requireAdmin(true);
     const { id: productId } = await params;
 
     if (!productId) throw new APIError("Missing id param!", 400);
@@ -81,6 +81,7 @@ export async function PUT(
       categoryId,
       compareAtPrice,
       stock,
+      lowStockThreshold,
     } = await request.json();
 
     if (
@@ -90,7 +91,8 @@ export async function PUT(
       !isPublished &&
       !categoryId &&
       !compareAtPrice &&
-      !stock
+      !stock &&
+      !lowStockThreshold
     )
       throw new APIError("Nothing to update!", 400);
 
@@ -105,6 +107,8 @@ export async function PUT(
         isPublished,
         categoryId,
         stock,
+        lowStockThreshold,
+        lastUpdatedBy: session.user.id
       },
       { new: true }
     );

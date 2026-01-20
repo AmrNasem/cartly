@@ -25,3 +25,5 @@ export type ProductFormState = {
   isPublished: boolean;
   images: ProductImageForm[];
 };
+
+export type queryOptions = { limit?: string; page?: string; categorySlug?: string; search?: string; };
