@@ -50,13 +50,13 @@ function ProductCard({ product }: { product: ProductCardDTO }) {
           aria-label="Rated {product.rateAverage} out of 5"
         >
           {Array.from({ length: 5 }).map((_, i) =>
-            i < Math.round(product.rateAverage) ? (
+            i < Math.round(product.averageRate) ? (
               <Star fill="orange" stroke="orange" key={i} className="size-3" />
             ) : (
               <Star key={i} className="size-3 text-gray-300" />
             )
           )}
-          <span className="ms-1 text-muted-foreground">({product.rates})</span>
+          <span className="ms-1 text-muted-foreground">({product.numOfReviews})</span>
         </div>
         <div className="flex gap-1 items-end">
           <span className="text-primary font-semibold">${product.price}</span>

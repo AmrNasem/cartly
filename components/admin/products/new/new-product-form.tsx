@@ -15,8 +15,9 @@ import Link from "next/link";
 import { MAX_IMGS_ALLOWED } from "@/lib/utils/constants";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
-async function createProduct(formData: FormData, callback: () => void) {
+async function createProduct(formData: FormData) {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/product`, {
       method: "POST",
@@ -24,7 +25,7 @@ async function createProduct(formData: FormData, callback: () => void) {
     });
     const data = await res.json();
     if (data.error) throw new Error(data.message);
-    callback();
+    return { message: "Product created successfully" };
   } catch (err) {
     console.log("Couldn't create product: ", err);
     return {
@@ -51,9 +52,10 @@ export default function NewProductForm({
     isPublished: true,
     images: [],
   });
-  
-  const [touched, setTouched] = useState({images: false, title: false, price: false, categoryId: false})
+
+  const [touched, setTouched] = useState({ images: false, title: false, price: false, categoryId: false })
   const router = useRouter();
+  const { error, success } = useToast();
 
   const hasChildren = useCallback((categoryId: string): boolean =>
     !!categories?.find((category) => category.parentId === categoryId), [categories]);
@@ -123,8 +125,8 @@ export default function NewProductForm({
   );
 
   async function handleSubmit() {
-    
-    setTouched(prev => Object.keys(prev).reduce((acc, key) => ({...acc, [key]: true}), prev))
+
+    setTouched(prev => Object.keys(prev).reduce((acc, key) => ({ ...acc, [key]: true }), prev))
     if (!validate()) return;
 
     const formData = new FormData();
@@ -137,9 +139,12 @@ export default function NewProductForm({
     images.forEach((img) => {
       formData.append("images", img.file, img.file.name);
     });
-    await createProduct(formData, () => {
+    const res = await createProduct(formData);
+    if (res.error) error(res.error);
+    else {
       router.push("/admin/products");
-    });
+      success(res.message || "Product created successfully");
+    }
   }
   const [, formAction, isPending] = useActionState(handleSubmit, null);
 

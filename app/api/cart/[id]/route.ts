@@ -10,12 +10,12 @@ export async function DELETE(
 ) {
   try {
     await requireAuth(true);
-    const { id: cartItemId } = await params;
+    const { id: productId } = await params;
 
-    if (!cartItemId) throw new APIError("Missing cartItemId param", 400);
+    if (!productId) throw new APIError("Missing cartItemId param", 400);
 
     await connectDB();
-    const removedProduct = await CartItem.findById(cartItemId);
+    const removedProduct = await CartItem.findOne({ productId });
     if (!removedProduct) throw new APIError("Product not found", 404);
 
     const result = await removedProduct.deleteOne();

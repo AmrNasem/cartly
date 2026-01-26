@@ -6,6 +6,8 @@ import SectionSekeleton from "./SectionSekeleton";
 async function Featured() {
   const products = await fetchFeaturedProducts();
 
+  if (products?.length === 0) return null;
+
   return (
     <section className="mycontainer my-8 py-3">
       <h2 className="text-foreground text-3xl mb-3 font-semibold text-center">

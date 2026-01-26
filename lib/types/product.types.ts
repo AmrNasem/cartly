@@ -1,18 +1,38 @@
 export type ProductCardDTO = {
+  id: string;
   slug: string;
   thumbnail: string;
   title: string;
   price: number;
   compareAtPrice?: number;
-  rates: number;
-  rateAverage: number;
+  numOfReviews: number;
+  averageRate: number;
   isNew: boolean;
 };
+
+export type Thumbnail = {
+  id: string;
+  url: string;
+  alt?: string;
+  order?: number;
+  publicId: string;
+}
+
+export type SingleProductDTO = {
+  description: string;
+  stock: number;
+  lowStockThreshold: number;
+  images: Thumbnail[]
+  isCarted: boolean;
+  isWishList: boolean;
+} & Omit<ProductCardDTO, "thumbnail" | "isNew">;
 
 export type ProductImageForm = {
   file: File;
   order: number;
 };
+
+export type SingleReviewDTO = { user: { image: string; name: string; }; createdAt: string; rating: number; comment: string; id: string }
 
 export type ProductFormState = {
   title: string;

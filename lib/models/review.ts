@@ -33,6 +33,9 @@ const ReviewSchema = new Schema<IReview>(
   }
 );
 
+ReviewSchema.index({ productId: 1, createdAt: -1 });
+ReviewSchema.index({ productId: 1, rating: 1 });
+
 // Hot-reload safe model export
 const Review: Model<IReview> =
   (mongoose.models.Review as Model<IReview>) ||

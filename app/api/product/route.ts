@@ -27,6 +27,7 @@ export async function POST(request: Request) {
       categoryId,
       compareAtPrice,
       stock,
+      lowStockThreshold
     } = productData;
     const files = formData.getAll("images") as File[];
 
@@ -51,8 +52,10 @@ export async function POST(request: Request) {
       isPublished,
       categoryId,
       stock,
+      lowStockThreshold,
       images: uploadedImages,
       createdBy: session.user.id,
+      lastUpdatedBy: session.user.id,
       slug: createUniqueSlug(title as string),
     });
 

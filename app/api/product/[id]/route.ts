@@ -4,13 +4,14 @@ import { requireAdmin } from "@/lib/auth/guards";
 import { connectDB } from "@/lib/db";
 import { Product } from "@/lib/models";
 import { enrichProducts } from "@/lib/product/enrich-product";
+import { Types } from "mongoose";
 
 export async function DELETE(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdmin(true);
+    const session = await requireAdmin(true);
     const { id: productId } = await params;
 
     if (!productId) throw new APIError("Missing id param", 400);
@@ -20,6 +21,7 @@ export async function DELETE(
     if (!product) throw new APIError("Product not found", 404);
 
     product.deletedAt = new Date();
+    product.lastUpdatedBy = new Types.ObjectId(session.user.id);
     await product.save();
 
     return new Response(
