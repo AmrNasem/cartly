@@ -16,8 +16,12 @@ export interface IProduct extends Document {
   price: number;
   compareAtPrice?: number;
   stock: number;
+  lowStockThreshold: number;
+  averageRate: number;
+  numOfReviews: number;
   categoryId: mongoose.Types.ObjectId;
   createdBy: mongoose.Types.ObjectId;
+  lastUpdatedBy: mongoose.Types.ObjectId;
   isPublished: boolean;
   images: IProductImage[];
   deletedAt: Date;
@@ -50,13 +54,17 @@ const ProductSchema = new Schema<IProduct>(
     price: { type: Number, required: true, min: 0 },
     compareAtPrice: { type: Number, default: 0 },
     stock: { type: Number, default: 1 },
+    lowStockThreshold: { type: Number, default: 3 },
+    averageRate: { type: Number, default: 0 },
+    numOfReviews: { type: Number, default: 0 },
     categoryId: {
       type: Schema.Types.ObjectId,
       ref: "Category",
       require: true,
     },
     createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    isPublished: { type: Boolean, default: false },
+    lastUpdatedBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    isPublished: { type: Boolean, default: true },
     images: { type: [ProductImageSchema], default: [] },
     deletedAt: { type: Date, default: null },
   },

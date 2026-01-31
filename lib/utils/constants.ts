@@ -1,0 +1,1 @@
+export const MAX_IMGS_ALLOWED = 8;

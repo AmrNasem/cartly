@@ -1,0 +1,20 @@
+import Navbar from "@/components/layout/Navbar";
+import { getSession } from "@/lib/auth/session";
+import { Metadata } from "next";
+import React from "react";
+
+export const metadata: Metadata = {
+  title: "Homepage",
+};
+
+async function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const session = await getSession();
+  return (
+    <>
+      <Navbar user={session?.user ?? null} />
+      {children}
+    </>
+  );
+}
+
+export default Layout;

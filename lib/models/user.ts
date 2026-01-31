@@ -47,7 +47,7 @@ const UserSchema = new Schema<IUser>(
 // Hot-reload safe model export for Next.js / serverless environments
 const User: Model<IUser> =
   (mongoose.models.User as Model<IUser>) ||
-  mongoose.model<IUser>("User", UserSchema);
+  mongoose.model<IUser>("User", UserSchema, "user");
 
 export default User;
 export { UserSchema };
