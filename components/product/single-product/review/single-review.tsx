@@ -27,7 +27,10 @@ function SingleReview({ review }: { review: SingleReviewDTO }) {
               : <Star key={`user-rating-${i}`} stroke="gray" className="size-2.5" />)
           }
         </div>
-        <p className="text-muted-foreground text-sm">{review.comment}</p>
+        {
+          review.comment &&
+          <p className="text-muted-foreground text-sm">{review.comment}</p>
+        }
       </div>
     </li>
   )

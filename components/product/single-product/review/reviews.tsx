@@ -4,9 +4,10 @@ import ReviewsList from "./reviews-list";
 import { fetchReviewsByProductId } from "@/actions/product.action";
 import ReviewsSkeleton from "./skeleton/reviews-skeleton";
 import RatingStatsSkeleton from "./skeleton/rating-stats";
+import NewReview from "./new-review";
 
 async function Reviews({ productId }: { productId: string; }) {
-  const { reviews, pagination } = await fetchReviewsByProductId(productId, 1);
+  const { reviews, pagination } = await fetchReviewsByProductId(productId, 1, 4);
 
   return <section className="space-y-8">
     <Suspense fallback={<RatingStatsSkeleton />}>
@@ -15,6 +16,7 @@ async function Reviews({ productId }: { productId: string; }) {
     <Suspense fallback={<ReviewsSkeleton />}>
       <ReviewsList productId={productId} initialReviews={reviews} initialPagination={pagination} />
     </Suspense>
+    <NewReview productId={productId} />
   </section>
 }
 

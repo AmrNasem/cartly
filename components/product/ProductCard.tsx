@@ -46,17 +46,32 @@ function ProductCard({ product }: { product: ProductCardDTO }) {
           <Link href={`/product/${product.slug}`}>{product.title}</Link>
         </h3>
         <div
-          className="flex items-center text-[11px] mb-2"
+          className="flex items-center gap-0.5 text-[11px] mb-2"
           aria-label="Rated {product.rateAverage} out of 5"
         >
-          {Array.from({ length: 5 }).map((_, i) =>
-            i < Math.round(product.averageRate) ? (
-              <Star fill="orange" stroke="orange" key={i} className="size-3" />
-            ) : (
-              <Star key={i} className="size-3 text-gray-300" />
-            )
+          <div className="flex items-center">
+            {Array.from({ length: 5 }).map((_, i) =>
+              i < Math.round(product.averageRate) ? (
+                <Star
+                  fill="orange"
+                  stroke="orange"
+                  key={i}
+                  className="size-3"
+                />
+              ) : (
+                <Star key={i} className="size-3 text-gray-300" />
+              ),
+            )}
+          </div>
+          {product.numOfReviews ? (
+            <span className="ms-1 text-muted-foreground">
+              ({product.numOfReviews})
+            </span>
+          ) : (
+            <p className="text-muted-foreground text-[11px]">
+              (No reviews yet!)
+            </p>
           )}
-          <span className="ms-1 text-muted-foreground">({product.numOfReviews})</span>
         </div>
         <div className="flex gap-1 items-end">
           <span className="text-primary font-semibold">${product.price}</span>

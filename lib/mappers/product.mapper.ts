@@ -1,4 +1,3 @@
-import { string } from "better-auth";
 import { IProductImage } from "../models/product";
 import { ProductCardDTO, SingleProductDTO, SingleReviewDTO, Thumbnail } from "../types/product.types";
 
@@ -13,9 +12,9 @@ export function mapProductCardDTO(product: any): ProductCardDTO {
     compareAtPrice: product.compareAtPrice,
     isNew:
       Date.now() - new Date(product.createdAt).getTime() <
-      1000 * 60 * 60 * 24 * 10,
-    numOfReviews: product.numOfReviews || 5,
-    averageRate: product.averageRate || 2.4,
+      1000 * 60 * 60 * 24 * 10, // 10 Days
+    numOfReviews: product.numOfReviews,
+    averageRate: product.averageRate,
   };
 }
 
@@ -41,8 +40,8 @@ export function mapSingleProductDTO(product: any & { isCarted: boolean; isWishLi
     stock: product.stock,
     lowStockThreshold: product.lowStockThreshold,
     images: product.images.map((img: IProductImage) => mapThumbnailDTO(img)),
-    numOfReviews: product.numOfReviews || 5,
-    averageRate: product.averageRate || 2.4,
+    numOfReviews: product.numOfReviews,
+    averageRate: product.averageRate,
     isCarted: product.isCarted,
     isWishList: product.isWishList,
   };

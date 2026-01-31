@@ -6,8 +6,8 @@ async function RatingStats({ productId }: { productId: string; }) {
   return (
     <article>
       <h2 className="text-xl mb-4 font-semibold">Customers Feedback</h2>
-      <div className="flex flex-col sm:grid grid-cols-[1fr_2fr] gap-2">
-        <div className="flex justify-center items-center flex-col bg-muted/30 rounded-md p-4">
+      <div className="flex flex-col sm:grid grid-cols-3 gap-2">
+        <div className={`flex justify-center items-center flex-col bg-muted/30 rounded-md p-4 ${totalReviews ? "" : "col-span-3"}`}>
           {
             totalReviews ?
               <span className="text-3xl font-bold text-primary/80">{averageRating.toFixed(1)}</span>
@@ -21,12 +21,12 @@ async function RatingStats({ productId }: { productId: string; }) {
                 : <Star key={`total-${i}`} stroke="gray" className="size-3" />)
             }
           </div>
-          <span className="text-muted-foreground text-sm font-semibold">Product Rating</span>
+          <span className="text-muted-foreground text-sm font-semibold text-center">Product Rating</span>
         </div>
         {
           !!totalReviews &&
           (
-            <ul className="col-span-2ss bg-muted/30 rounded-md p-2">
+            <ul className="col-span-2 bg-muted/30 rounded-md p-2">
               {
                 ratings.reverse().map((rating, index) => <li className="p-1 flex items-center gap-2" key={index}>
                   <div className="relative h-1 grow bg-muted rounded-full overflow-hidden">

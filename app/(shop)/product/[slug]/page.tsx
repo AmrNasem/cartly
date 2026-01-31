@@ -4,7 +4,11 @@ import Reviews from "@/components/product/single-product/review/reviews";
 import Thumbnails from "@/components/product/single-product/thumbnails";
 import { notFound } from "next/navigation";
 
-async function SingleProduct({ params }: { params: Promise<{ slug: string; }> }) {
+async function SingleProduct({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const slug = (await params).slug;
   const { product, categoryPath } = await fetchProductBySlug(slug);
 
@@ -23,7 +27,30 @@ async function SingleProduct({ params }: { params: Promise<{ slug: string; }> })
         </div>
       </div>
     </main>
-  )
+  );
 }
 
-export default SingleProduct
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const resolvedParams = await params;
+  const { product } = await fetchProductBySlug(resolvedParams.slug);
+
+  if (!product) return { title: "Product not found" };
+
+  return {
+    title: `${product.title} | Cartly`,
+    description: product.description,
+    openGraph: {
+      title: product.title,
+      description: product.description,
+      images: product.images,
+      url: `${process.env.NEXT_PUBLIC_APP_URL}/product/${resolvedParams.slug}`,
+    },
+    robots: { index: true, follow: true },
+  };
+}
+
+export default SingleProduct;

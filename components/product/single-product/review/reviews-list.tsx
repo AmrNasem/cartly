@@ -41,7 +41,7 @@ function ReviewsList({ productId, initialReviews, initialPagination }: { product
       {
         pagination.totalPages > pagination.page &&
         <Button disabled={isPending} onClick={loadMore} variant="link" className="flex items-center justify-center gap-1 mx-auto cursor-pointer text-primary/80 my-3">{
-          isPending && <Loader2 />
+          isPending && <Loader2 className="animate-spin" />
         }
           <span>More Reviews</span>
         </Button>

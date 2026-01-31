@@ -19,7 +19,10 @@ function Hero() {
               <span>Shop Now</span>
               <ArrowRight className="duration-150 group-hover:translate-x-1 size-4" />
             </button>
-            <Link href="/signup" className="font-semibold text-[12px] text-center py-2 px-5 cursor-pointer rounded-md text-foreground bg-white duration-150 hover:bg-accent hover:text-accent-foreground border border-black/10">
+            <Link
+              href="/signup"
+              className="font-semibold text-[12px] text-center py-2 px-5 cursor-pointer rounded-md text-foreground bg-white duration-150 hover:bg-accent hover:text-accent-foreground border border-black/10"
+            >
               <span>Sign Up</span>
             </Link>
           </div>
