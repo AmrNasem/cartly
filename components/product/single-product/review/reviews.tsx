@@ -6,18 +6,28 @@ import ReviewsSkeleton from "./skeleton/reviews-skeleton";
 import RatingStatsSkeleton from "./skeleton/rating-stats";
 import NewReview from "./new-review";
 
-async function Reviews({ productId }: { productId: string; }) {
-  const { reviews, pagination } = await fetchReviewsByProductId(productId, 1, 4);
+async function Reviews({ productId }: { productId: string }) {
+  const { reviews, pagination } = await fetchReviewsByProductId(
+    productId,
+    1,
+    4,
+  );
 
-  return <section className="space-y-8">
-    <Suspense fallback={<RatingStatsSkeleton />}>
-      <RatingStats productId={productId} />
-    </Suspense>
-    <Suspense fallback={<ReviewsSkeleton />}>
-      <ReviewsList productId={productId} initialReviews={reviews} initialPagination={pagination} />
-    </Suspense>
-    <NewReview productId={productId} />
-  </section>
+  return (
+    <section className="space-y-8">
+      <Suspense fallback={<RatingStatsSkeleton />}>
+        <RatingStats productId={productId} />
+      </Suspense>
+      <Suspense fallback={<ReviewsSkeleton />}>
+        <ReviewsList
+          productId={productId}
+          initialReviews={reviews}
+          initialPagination={pagination}
+        />
+      </Suspense>
+      <NewReview productId={productId} />
+    </section>
+  );
 }
 
-export default Reviews
+export default Reviews;

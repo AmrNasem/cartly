@@ -1,5 +1,6 @@
+import AddToCart from "@/components/cart/add.to-cart";
+import RemoveFromCart from "@/components/cart/remove-from-cart";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { getProductStatusVariant } from "@/lib/product/product.utils";
 import { SingleProductDTO } from "@/lib/types/product.types";
 import { Heart, ChevronRight, ShoppingCart, Star } from "lucide-react";
@@ -88,18 +89,21 @@ function ProductInfo({
         {stock.text}
       </Badge>
       {product.isCarted ? (
-        <Button
-          variant="outline"
+        <RemoveFromCart
+          productId={product.id}
           className="flex gap-2 items-center justify-center w-full my-6"
         >
           <ShoppingCart fill="" className="size-4" />
           <span>Remove from Cart</span>
-        </Button>
+        </RemoveFromCart>
       ) : (
-        <Button className="flex gap-2 items-center justify-center cursor-pointer w-full my-6">
+        <AddToCart
+          productId={product.id}
+          className="flex gap-2 items-center justify-center cursor-pointer w-full my-6"
+        >
           <ShoppingCart className="size-4" />
           <span>Add to Cart</span>
-        </Button>
+        </AddToCart>
       )}
     </section>
   );

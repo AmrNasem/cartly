@@ -1,8 +1,10 @@
+import { getSession } from "@/lib/auth/session";
 import { ArrowRight, Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-function Hero() {
+async function Hero() {
+  const session = await getSession();
   return (
     <section className="bg-linear-to-br from-muted/30 to-muted/10 py-12 md:py-16">
       <div className="mycontainer flex gap-12 lg:items-center justify-between flex-col lg:flex-row">
@@ -19,12 +21,15 @@ function Hero() {
               <span>Shop Now</span>
               <ArrowRight className="duration-150 group-hover:translate-x-1 size-4" />
             </button>
-            <Link
+            {
+              !session &&
+              <Link
               href="/signup"
               className="font-semibold text-[12px] text-center py-2 px-5 cursor-pointer rounded-md text-foreground bg-white duration-150 hover:bg-accent hover:text-accent-foreground border border-black/10"
-            >
+              >
               <span>Sign Up</span>
             </Link>
+            }
           </div>
           <div className="flex items-center justify-evenly sm:justify-start gap-6 my-10">
             <div>

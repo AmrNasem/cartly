@@ -1,12 +1,16 @@
 import { IProductImage } from "../models/product";
-import { ProductCardDTO, SingleProductDTO, SingleReviewDTO, Thumbnail } from "../types/product.types";
+import {
+  ProductCardDTO,
+  SingleProductDTO,
+  SingleReviewDTO,
+  Thumbnail,
+} from "../types/product.types";
 
 export function mapProductCardDTO(product: any): ProductCardDTO {
   return {
     id: product._id.toString(),
     slug: product.slug,
-    thumbnail:
-      product.images[0]?.url,
+    thumbnail: product.images[0]?.url,
     title: product.title,
     price: product.price,
     compareAtPrice: product.compareAtPrice,
@@ -15,6 +19,8 @@ export function mapProductCardDTO(product: any): ProductCardDTO {
       1000 * 60 * 60 * 24 * 10, // 10 Days
     numOfReviews: product.numOfReviews,
     averageRate: product.averageRate,
+    isCarted: product.isCarted || false,
+    isWishlist: product.isWishlist || false,
   };
 }
 
@@ -25,11 +31,12 @@ export function mapThumbnailDTO(thumbnail: IProductImage): Thumbnail {
     alt: thumbnail.alt,
     order: thumbnail.order,
     publicId: thumbnail.publicId,
-
-  }
+  };
 }
 
-export function mapSingleProductDTO(product: any & { isCarted: boolean; isWishList: boolean }): SingleProductDTO {
+export function mapSingleProductDTO(
+  product: any & { isCarted: boolean; isWishList: boolean },
+): SingleProductDTO {
   return {
     id: product._id.toString(),
     slug: product.slug,
@@ -54,8 +61,8 @@ export function mapSingleReviewDTO(review: any): SingleReviewDTO {
     rating: review.rating,
     user: {
       image: review.userId.image,
-      name: review.userId.name
+      name: review.userId.name,
     },
-    id: review._id.toString()
-  }
+    id: review._id.toString(),
+  };
 }

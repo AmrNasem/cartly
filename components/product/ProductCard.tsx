@@ -2,6 +2,8 @@ import { ProductCardDTO } from "@/lib/types/product.types";
 import { Heart, ShoppingCart, Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import RemoveFromCart from "../cart/remove-from-cart";
+import AddToCart from "../cart/add.to-cart";
 
 function ProductCard({ product }: { product: ProductCardDTO }) {
   return (
@@ -35,10 +37,24 @@ function ProductCard({ product }: { product: ProductCardDTO }) {
           className="object-cover block group-hover:scale-[1.03] duration-150 -z-10"
         />
         <div className="z-20 md:opacity-0 group-hover:opacity-100 md:translate-y-1 group-hover:translate-y-0 absolute bottom-0 start-0 h-[22%] mx-auto w-full bg-linear-to-b from-transparent px-2 to-foreground duration-150">
-          <button className="bg-primary hover:bg-primary/80 duration-200 text-white flex gap-2 items-center justify-center w-full text-sm p-1 rounded-md cursor-pointer">
+          {/* <button className="bg-primary hover:bg-primary/80 duration-200 text-white flex gap-2 items-center justify-center w-full text-sm p-1 rounded-md cursor-pointer">
             <ShoppingCart className="size-4" />
             <span>Add to Cart</span>
-          </button>
+          </button> */}
+          {product.isCarted ? (
+            <RemoveFromCart productId={product.id} className="duration-200 flex gap-2 items-center justify-center w-full text-sm p-1 rounded-md">
+              <ShoppingCart fill="" className="size-4" />
+              <span>Remove from Cart</span>
+            </RemoveFromCart>
+          ) : (
+            <AddToCart
+              productId={product.id}
+              className="bg-primary hover:bg-primary/80 duration-200 text-white flex gap-2 items-center justify-center w-full text-sm p-1 rounded-md cursor-pointer"
+            >
+              <ShoppingCart className="size-4" />
+              <span>Add to Cart</span>
+            </AddToCart>
+          )}
         </div>
       </figure>
       <div className="p-4">

@@ -4,6 +4,7 @@ import { requireAuth } from "@/lib/auth/guards";
 import { connectDB } from "@/lib/db";
 import { Cart, CartItem } from "@/lib/models";
 import { ICartItem } from "@/lib/models/cart";
+import { getCart } from "@/lib/services/cart.service";
 
 export async function POST(request: Request) {
   try {
@@ -53,22 +54,8 @@ export async function GET() {
   try {
     const session = await requireAuth(true);
     await connectDB();
-    let cart = await Cart.findOne({
-      userId: session.user.id,
-    });
-
-    let cartProducts: ICartItem[] = [];
-    if (cart) cartProducts = await CartItem.find({ cartId: cart._id });
-    else cart = await Cart.create({ userId: session.user.id });
-
     return new Response(
-      JSON.stringify({
-        message: "Cart fetched successfully!",
-        payload: {
-          cart,
-          products: cartProducts,
-        },
-      })
+      JSON.stringify(await getCart(session.user.id))
     );
   } catch (err) {
     return errorHandler(err);

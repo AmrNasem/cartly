@@ -100,7 +100,7 @@ function NewReview({ productId }: { productId: string }) {
             className="my-2"
             disabled={!isFormValid || submitFallback.loading}
           >
-            {submitFallback.loading && <Loader2 className="animate-spin" />}
+            {submitFallback.loading && <Loader2 className="animate-spin size-4" />}
             Submit Review
           </Button>
         </div>
