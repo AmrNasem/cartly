@@ -47,7 +47,6 @@ export default async function ProductsPage() {
         <CardHeader className="flex flex-row items-center justify-between space-y-0">
           <CardTitle className="text-sm font-semibold">Product list</CardTitle>
           <span className="text-xs text-muted-foreground">
-            {/* TODO: Replace with real product count */}
             {meta.total} products
           </span>
         </CardHeader>
@@ -70,7 +69,6 @@ export default async function ProductsPage() {
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <div className="relative h-10 w-10 min-w-10 overflow-hidden rounded-md bg-muted">
-                          {/* TODO: Replace with real product thumbnails */}
                           <Image
                             src={product.images[0]?.url || ""}
                             alt={product.title}

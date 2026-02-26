@@ -17,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ar">
       <body className={`antialiased`}>
         <ToastProvider>{children}</ToastProvider>
       </body>

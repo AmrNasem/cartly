@@ -35,7 +35,8 @@
     "shadcn": "^3.6.2",
     "slugify": "^1.6.6",
     "tailwind-merge": "^3.4.0",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.0",
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

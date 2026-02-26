@@ -2,7 +2,7 @@
 
 import { getSession } from "@/lib/auth/session";
 import { connectDB } from "@/lib/db";
-import { mapSingleProductDTO } from "@/lib/mappers/product.mapper";
+import { mapProductCardDTO, mapSingleProductDTO } from "@/lib/mappers/product.mapper";
 import { enrichProducts } from "@/lib/product/enrich-product";
 import {
   getFeaturedProducts,
@@ -16,7 +16,9 @@ import { queryOptions } from "@/lib/types/product.types";
 
 export async function fetchFeaturedProducts(limit = 8) {
   await connectDB();
-  return getFeaturedProducts(limit);
+  const products = await getFeaturedProducts(limit);
+  const enrichedProducts = await enrichProducts(products);
+  return enrichedProducts.map((product) => mapProductCardDTO(product));
 }
 
 export async function fetchRecommendedProducts(limit = 8) {
@@ -24,17 +26,16 @@ export async function fetchRecommendedProducts(limit = 8) {
   const session = await getSession();
   if (!session) return [];
 
-  return getRecommendedProducts(session.user.id, limit);
+  const products = await getRecommendedProducts(session.user.id, limit);
+  const enrichedProducts = await enrichProducts(products);
+  return enrichedProducts.map((product) => mapProductCardDTO(product));
 }
 
 export async function fetchProducts(options: queryOptions = {}) {
   await connectDB();
-  const { products, ...rest } = await getProducts(options);
-  const enrichedProducts = await enrichProducts(products);
-  return {
-    products: enrichedProducts,
-    ...rest
-  }
+  // const { products, ...rest } = await getProducts(options);
+  // const enrichedProducts = await enrichProducts(products);
+  return getProducts(options);
 }
 
 

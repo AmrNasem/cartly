@@ -1,5 +1,5 @@
 import { CartItem, Category, Order, Product, Review } from "@/lib/models";
-import { mapProductCardDTO, mapSingleReviewDTO } from "@/lib/mappers/product.mapper";
+import { mapSingleReviewDTO } from "@/lib/mappers/product.mapper";
 import { queryOptions } from "../types/product.types";
 import mongoose from "mongoose";
 import { computeRatingProgress } from "../product/product.utils";
@@ -9,10 +9,7 @@ export async function getFeaturedProducts(limit = 8) {
     .sort({ createdAt: -1 })
     .limit(limit)
     .lean();
-  const formattedProducts = products.map((product) =>
-    mapProductCardDTO(product)
-  );
-  return formattedProducts;
+  return products;
 }
 
 export async function getRecommendedProducts(userId: string, limit = 12) {
@@ -21,7 +18,7 @@ export async function getRecommendedProducts(userId: string, limit = 12) {
 
   // Gather all previously purchased product IDs
   const purchasedProductIds = pastOrders.flatMap((order) =>
-    order.items.map((i) => i.productId.toString())
+    order.items.map((i) => i.productId.toString()),
   );
 
   // Find categories of purchased products
@@ -41,8 +38,8 @@ export async function getRecommendedProducts(userId: string, limit = 12) {
   // Union categories from purchases and cart
   const recommendedCategories = Array.from(
     new Set(
-      [...purchasedCategories, ...cartCategories].map((id) => id.toString())
-    )
+      [...purchasedCategories, ...cartCategories].map((id) => id.toString()),
+    ),
   );
 
   // 3️⃣ Exclude products already in cart or purchased (IDs to string for consistency)
@@ -74,10 +71,10 @@ export async function getRecommendedProducts(userId: string, limit = 12) {
       .sort({ createdAt: -1 })
       .limit(limit)
       .lean();
-    return products.map((product) => mapProductCardDTO(product));
+    return products;
   }
 
-  return recommendedProducts.map((product) => mapProductCardDTO(product));
+  return recommendedProducts;
 }
 
 export async function getProducts(options: queryOptions = {}) {
@@ -123,16 +120,26 @@ export async function getProducts(options: queryOptions = {}) {
 }
 
 export async function getProductBySlug(slug: string) {
-  const product = await Product.findOne({ slug, deletedAt: null }).populate("categoryId").lean();
+  const product = await Product.findOne({ slug, deletedAt: null })
+    .populate("categoryId")
+    .lean();
   if (!product) return {};
   const categories = await Category.find().lean();
 
-  const getCategoryPath = (categoryId?: string, args: string[] = []): string[] => {
+  const getCategoryPath = (
+    categoryId?: string,
+    args: string[] = [],
+  ): string[] => {
     if (!categoryId) return args;
-    const category = categories.find(cat => cat._id.toString() === categoryId);
+    const category = categories.find(
+      (cat) => cat._id.toString() === categoryId,
+    );
     if (!category) return args;
-    return getCategoryPath(category.parentId?.toString(), [category.name, ...args])
-  }
+    return getCategoryPath(category.parentId?.toString(), [
+      category.name,
+      ...args,
+    ]);
+  };
   const categoryPath = getCategoryPath(product.categoryId._id.toString());
 
   return { product, categoryPath };
@@ -140,7 +147,7 @@ export async function getProductBySlug(slug: string) {
 export async function getReviewsByProductId(
   productId: string,
   page = 1,
-  limit = 10
+  limit = 10,
 ) {
   const skip = (page - 1) * limit;
 
@@ -156,7 +163,7 @@ export async function getReviewsByProductId(
   ]);
 
   return {
-    reviews: reviews.map(review => mapSingleReviewDTO(review)),
+    reviews: reviews.map((review) => mapSingleReviewDTO(review)),
     pagination: {
       page,
       limit,
@@ -207,10 +214,11 @@ export async function getRatingStats(productId: string) {
     averageRating: 0,
     ratings: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
   };
-  return (
-    {
-      ...safeStats,
-      ratings: computeRatingProgress({ ratings: safeStats.ratings, totalReviews: safeStats.totalReviews })
-    }
-  );
+  return {
+    ...safeStats,
+    ratings: computeRatingProgress({
+      ratings: safeStats.ratings,
+      totalReviews: safeStats.totalReviews,
+    }),
+  };
 }

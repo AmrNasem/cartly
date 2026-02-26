@@ -36,7 +36,7 @@ export function AdminHeader({ user }: { user: AuthUser }) {
                   size="icon"
                   className="shrink-0 border border-black/5 bg-muted/60"
                 >
-                  <Menu className="h-4 w-4" />
+                  <Menu className="size-4" />
                   <span className="sr-only">Toggle navigation</span>
                 </Button>
               </SheetTrigger>

@@ -165,7 +165,7 @@ export default function NewProductForm({
             disabled={isPending}
           >
             {isPending ? (
-              <Loader2 className="min-w-12 animate-spin m-0" />
+              <Loader2 className="min-w-12 animate-spin m-0 size-4" />
             ) : form.isPublished ? (
               "Publish product"
             ) : (
@@ -382,7 +382,7 @@ export default function NewProductForm({
               disabled={isPending}
             >
               {isPending ? (
-                <Loader2 className="min-w-12 animate-spin m-0" />
+                <Loader2 className="min-w-12 animate-spin m-0 size-4" />
               ) : form.isPublished ? (
                 "Publish product"
               ) : (

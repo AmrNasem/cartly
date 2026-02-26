@@ -83,9 +83,9 @@ function Navbar({ user }: { user: AuthUser | null }) {
             <Search className="size-4 text-foreground" />
           </button>
 
-          <button className=" hover:bg-[#e9ebef] p-1 rounded-md duration-150 cursor-pointer">
+          <Link href="/cart" className="hover:bg-[#e9ebef] p-1 rounded-md duration-150 cursor-pointer">
             <ShoppingCart className="size-4 text-foreground" />
-          </button>
+          </Link>
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

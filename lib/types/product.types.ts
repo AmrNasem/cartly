@@ -8,6 +8,15 @@ export type ProductCardDTO = {
   numOfReviews: number;
   averageRate: number;
   isNew: boolean;
+  isCarted?: boolean;
+  isWishlist?: boolean;
+};
+
+export type CartItemDTO = {
+  id: string;
+  quantity: number;
+  product: ProductCardDTO & { description: string; stock: number; lowStockThreshold: number };
+  cartId: string;
 };
 
 export type Thumbnail = {
