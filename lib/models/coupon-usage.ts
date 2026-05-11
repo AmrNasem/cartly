@@ -4,6 +4,7 @@ export interface ICouponUsage extends Document {
   _id: mongoose.Types.ObjectId;
   couponId: mongoose.Types.ObjectId;
   userId?: mongoose.Types.ObjectId | null;
+  cartId?: mongoose.Types.ObjectId | null;
   orderId?: mongoose.Types.ObjectId | null;
   usedAt: Date;
   createdAt: Date;
@@ -21,6 +22,12 @@ const CouponUsageSchema = new Schema<ICouponUsage>(
     userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
+      default: null,
+      index: true,
+    },
+    cartId: {
+      type: Schema.Types.ObjectId,
+      ref: "Cart",
       default: null,
       index: true,
     },

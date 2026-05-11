@@ -21,7 +21,7 @@ function page() {
             </div>
           }
         >
-          <CartItemsWrapper></CartItemsWrapper>
+          <CartItemsWrapper />
         </Suspense>
       </section>
       <Checkout className="col-span-2 md:col-span-1 sticky top-21 self-start" />

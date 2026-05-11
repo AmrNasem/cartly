@@ -2,10 +2,9 @@ import { fetchCart } from "@/actions/cart.action";
 import CartItems from "./cart-items";
 
 async function CartItemsWrapper({ className = "" }) {
-  const cart = await fetchCart();
-  const items = cart?.payload.products || [];
+  const cart = (await fetchCart()).payload;
 
-  return <CartItems items={items} className={className} />;
+  return <CartItems cart={cart} className={className} />;
 }
 
 export default CartItemsWrapper

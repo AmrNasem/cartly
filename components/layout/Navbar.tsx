@@ -1,5 +1,5 @@
 import { AuthUser } from "@/lib/auth/types";
-import { Menu, Search, ShoppingCart } from "lucide-react";
+import { Menu, Search } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -13,6 +13,7 @@ import {
 } from "../ui/dropdown-menu";
 import Guard from "./guard";
 import LogoutButton from "../auth/logout-button";
+import CartPageNavigator from "../cart/cart-page-navigator";
 
 const links = [
   {
@@ -83,9 +84,7 @@ function Navbar({ user }: { user: AuthUser | null }) {
             <Search className="size-4 text-foreground" />
           </button>
 
-          <Link href="/cart" className="hover:bg-[#e9ebef] p-1 rounded-md duration-150 cursor-pointer">
-            <ShoppingCart className="size-4 text-foreground" />
-          </Link>
+          <CartPageNavigator />
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

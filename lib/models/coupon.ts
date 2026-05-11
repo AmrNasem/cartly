@@ -61,6 +61,7 @@ CouponSchema.index(
     },
   }
 );
+
 CouponSchema.methods.calculateDiscount = function (subtotal: number): number {
   if (!this.isActive) return 0;
 
@@ -83,7 +84,7 @@ CouponSchema.methods.calculateDiscount = function (subtotal: number): number {
   }
 
   return Math.max(discount, 0);
-};
+}
 // Hot-reload safe model export
 const Coupon: Model<ICoupon> =
   (mongoose.models.Coupon as Model<ICoupon>) ||

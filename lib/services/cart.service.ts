@@ -1,5 +1,5 @@
-import { mapCartItemDTO } from "../mappers/cart.mapper";
-import { Cart } from "../models";
+import { mapCartCouponDTO, mapCartItemDTO } from "../mappers/cart.mapper";
+import { Cart, CartCoupon, Coupon, CouponUsage } from "../models";
 import { CartItem } from "../models/cart";
 
 export async function getCart(userId: string) {
@@ -8,18 +8,21 @@ export async function getCart(userId: string) {
       userId,
     }).lean();
 
-    let cartProducts;
-    if (cart)
-      cartProducts = await CartItem.find({ cartId: cart._id })
+    let cartItems, cartCoupon;
+    if (cart) {
+      cartItems = await CartItem.find({ cartId: cart._id })
         .populate("productId")
         .lean();
+      cartCoupon = await CartCoupon.findOne({ cartId: cart._id }).populate("couponId")
+    }
     else cart = (await Cart.create({ userId })).toJSON();
 
     return {
       message: "Cart fetched successfully!",
       payload: {
-        cart,
-        products: cartProducts?.map((product) => mapCartItemDTO(product)) || [],
+        cartId: cart._id.toString(),
+        appliedCoupon: cartCoupon ? mapCartCouponDTO(cartCoupon) : null,
+        items: cartItems?.map((product) => mapCartItemDTO(product)) || [],
       },
     };
   } catch (err) {
@@ -97,5 +100,69 @@ export async function addToCart(productId: string, userId: string) {
     };
   } catch (error) {
     throw error;
+  }
+}
+
+export async function applyCoupon({
+  couponCode,
+  cartId,
+}: {
+  couponCode: string;
+  cartId: string;
+}) {
+  try {
+    const coupon = await Coupon.findOne({ code: couponCode });
+    if (!coupon) throw new Error("Invalid coupon!");
+    if (!coupon.isActive) throw new Error("This coupon is no longer available");
+    if (coupon.startDate && new Date(coupon.startDate).getTime() > Date.now())
+      throw new Error("Invalid coupon!");
+    if (coupon.endDate && new Date(coupon.endDate).getTime() < Date.now())
+      throw new Error("Coupon Expired!");
+
+    const totalUsage = await CouponUsage.countDocuments({
+      couponId: coupon._id,
+    });
+    if (coupon.usageLimit && totalUsage >= coupon.usageLimit)
+      throw new Error("This coupon is no longer available");
+
+    const userUsage = await CouponUsage.countDocuments({
+      couponId: coupon._id,
+      cartId,
+    });
+    if (coupon.perUserLimit && userUsage >= coupon.perUserLimit)
+      throw new Error("This coupon is no longer available");
+
+    // const cartItems = await CartItem.find({ cartId }).populate<{
+    //   productId: { price: number };
+    // }>("productId");
+    // const subtotal = cartItems.reduce(
+    //   (acc, item) => acc + item.productId.price * item.quantity,
+    //   0,
+    // );
+
+    // const discount = coupon.calculateDiscount(subtotal);
+
+    await CartCoupon.findOneAndDelete({ cartId });
+    const cartCoupon = await CartCoupon.create({ cartId, couponId: coupon._id });
+
+    return {
+      appliedCoupon: mapCartCouponDTO(await cartCoupon.populate("couponId")),
+      // discount,
+    };
+  } catch (err) {
+    return {
+      error: err instanceof Error ? err.message : "Something went wrong!",
+    };
+  }
+}
+
+export async function removeCartCoupon({ cartCouponId, cartId }: { cartCouponId: string, cartId: string }) {
+  try {
+    const cartCoupon = await CartCoupon.findOne({ _id: cartCouponId, cartId });
+    if (!cartCoupon) throw new Error("Cart coupon not found!");
+    await cartCoupon.deleteOne();
+    return { message: "Cart coupon removed successfully!" };
+  } catch (err) {
+    throw err;
   }
 }

@@ -1,5 +1,17 @@
 import { CartItemDTO } from "../types/product.types";
 import { mapProductCardDTO } from "./product.mapper";
+import { CartCouponDTO } from "../types/coupon.types";
+import { mapCouponDTO } from "./coupon.mapper";
+
+export function mapCartCouponDTO(
+  cartCoupon: any,
+): CartCouponDTO {
+  return {
+    id: cartCoupon._id.toString(),
+    cartId: cartCoupon.cartId.toString(),
+    coupon: mapCouponDTO(cartCoupon.couponId),
+  };
+}
 
 export function mapCartItemDTO(cartItem: any): CartItemDTO {
   return {
