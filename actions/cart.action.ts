@@ -2,7 +2,14 @@
 
 import { requireAuth } from "@/lib/auth/guards";
 import { connectDB } from "@/lib/db";
-import { addToCart, getCart, removeFromCart, updateQuantity } from "@/lib/services/cart.service";
+import {
+  addToCart,
+  applyCoupon,
+  getCart,
+  removeCartCoupon,
+  removeFromCart,
+  updateQuantity,
+} from "@/lib/services/cart.service";
 
 export async function fetchCart() {
   const session = await requireAuth();
@@ -10,7 +17,15 @@ export async function fetchCart() {
   return getCart(session.user.id);
 }
 
-export async function updateQuantityAction(productId: string, quantity: number) {
+export async function removeCartCouponAction(cartCouponId: string, cartId: string) {
+  await connectDB();
+  return removeCartCoupon({cartCouponId, cartId});
+}
+
+export async function updateQuantityAction(
+  productId: string,
+  quantity: number,
+) {
   // try {
   await connectDB();
   return updateQuantity(productId, quantity);
@@ -29,4 +44,16 @@ export async function addToCartAction(productId: string) {
   const session = await requireAuth(true);
   await connectDB();
   return addToCart(productId, session.user.id);
+}
+
+export async function applyCouponAction({
+  couponCode,
+  cartId,
+}: {
+  couponCode: string;
+  cartId: string;
+}) {
+  await requireAuth(true);
+  await connectDB();
+  return applyCoupon({ cartId, couponCode });
 }

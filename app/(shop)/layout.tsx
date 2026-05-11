@@ -1,3 +1,4 @@
+import HydrateCart from "@/components/cart/hydrate-cart";
 import Navbar from "@/components/layout/Navbar";
 import { getSession } from "@/lib/auth/session";
 import { Metadata } from "next";
@@ -11,6 +12,7 @@ async function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
   const session = await getSession();
   return (
     <>
+      <HydrateCart />
       <Navbar user={session?.user ?? null} />
       {children}
     </>

@@ -2,26 +2,27 @@
 
 import CartItem from "./cart-item";
 import { cn } from "@/lib/utils";
-import { CartItemDTO } from "@/lib/types/product.types";
 import { useEffect } from "react";
 import { useCartStore } from "@/store/cart-store";
+import { CartState } from "@/lib/types/cart.types";
+import { CartItemDTO } from "@/lib/types/product.types";
 
-function CartItems({ className = "", items }: { className?: string, items: CartItemDTO[] }) {
+function CartItems({ className = "", cart }: { className?: string, cart: CartState & {items: CartItemDTO[]} }) {
   const setCart = useCartStore(state => state.setCart);
-  const cartedProducts = useCartStore(state => state.items);
+  const cartedProducts = useCartStore(state => state.cart.items);
 
   useEffect(() => {
-    if (items && !cartedProducts) {
-      setCart(items);
+    if (cart && !cartedProducts) {
+      setCart(cart);
     }
-  }, [items, cartedProducts, setCart]);
+  }, [cart, cartedProducts, setCart]);
 
 
   return (
     <div className={cn("space-y-4", className)}>
       {
-        items.length ? (
-          items.map((item) => <CartItem key={item.id} item={item} />)
+        cart.items.length ? (
+          cart.items.map((item) => <CartItem key={item.id} item={item} />)
         ) : (
           <div className="flex md:block justify-center flex-col min-h-75">
             <p className="text-xl text-center p-2 md:py-4 bg-muted/20 text-muted-foreground rounded-xl border border-muted">

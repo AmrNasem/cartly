@@ -77,7 +77,7 @@ export default async function ProductsPage() {
                             className="object-cover w-full block"
                           />
                         </div>
-                        <div className="space-y-0.5">
+                        <div className="space-y-0.5 grow">
                           <p className="text-sm font-medium line-clamp-2">{product.title}</p>
                           <p className="text-[11px] text-muted-foreground line-clamp-1 max-w-3/4" title={product.description}>
                             {product.description}
