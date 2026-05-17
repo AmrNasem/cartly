@@ -1,48 +1,20 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+
+import { fetchAdminCouponsAction } from "@/actions/coupon.action";
+import { CouponCard } from "@/components/admin/coupons/coupon-card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Metadata } from "next";
+import { Card, CardContent } from "@/components/ui/card";
 
 export const metadata: Metadata = {
   title: "Manage Coupons",
 };
-const coupons = [
-  {
-    code: "WELCOME10",
-    discount: "10% off",
-    expiry: "Feb 28, 2026",
-    status: "Active",
-  },
-  {
-    code: "FREESHIP",
-    discount: "Free shipping",
-    expiry: "Jan 31, 2026",
-    status: "Expiring soon",
-  },
-  {
-    code: "WINTER25",
-    discount: "25% off",
-    expiry: "Jan 15, 2026",
-    status: "Expired",
-  },
-];
 
-function getCouponStatusVariant(status: string) {
-  switch (status) {
-    case "Active":
-      return "success" as const;
-    case "Expiring soon":
-      return "warning" as const;
-    case "Expired":
-      return "destructive" as const;
-    default:
-      return "default" as const;
-  }
-}
+export default async function CouponsPage() {
+  const coupons = await fetchAdminCouponsAction();
 
-export default function CouponsPage() {
   return (
-    <div className="space-y-4 md:space-y-6">
+    <div className="space-y-4 md:space-y-6 md:max-w-[80%] mx-auto">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-sm font-semibold">Coupons</h2>
@@ -50,36 +22,30 @@ export default function CouponsPage() {
             Create and manage discount codes for your promotions.
           </p>
         </div>
-        <Button size="sm">
-          {/* TODO: Open coupon creation UI */}
-          Create coupon
+        <Button size="sm" asChild>
+          <Link href="/admin/coupons/new">Create coupon</Link>
         </Button>
       </div>
 
-      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {coupons.map((coupon) => (
-          <Card key={coupon.code}>
-            <CardHeader className="space-y-2">
-              <div className="flex items-center justify-between gap-2">
-                <CardTitle className="text-sm font-semibold">
-                  {coupon.code}
-                </CardTitle>
-                <Badge variant={getCouponStatusVariant(coupon.status)}>
-                  {coupon.status}
-                </Badge>
-              </div>
-              <p className="text-xs text-muted-foreground">{coupon.discount}</p>
-            </CardHeader>
-            <CardContent className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>Expires {coupon.expiry}</span>
-              <Button variant="outline" size="sm">
-                {/* TODO: Wire edit flow */}
-                Edit
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </section>
+      {coupons.length === 0 ? (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center gap-3 py-10 text-center">
+            <p className="text-sm font-medium">No coupons yet</p>
+            <p className="max-w-sm text-xs text-muted-foreground">
+              Create your first coupon to offer discounts and run promotions.
+            </p>
+            <Button size="sm" asChild>
+              <Link href="/admin/coupons/new">Create coupon</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {coupons.map((coupon) => (
+            <CouponCard key={coupon.id} coupon={coupon} />
+          ))}
+        </section>
+      )}
     </div>
   );
 }
