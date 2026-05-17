@@ -3,7 +3,6 @@ import { APIError } from "@/lib/api/errors";
 import { requireAuth } from "@/lib/auth/guards";
 import { connectDB } from "@/lib/db";
 import { Cart, CartItem } from "@/lib/models";
-import { ICartItem } from "@/lib/models/cart";
 import { getCart } from "@/lib/services/cart.service";
 
 export async function POST(request: Request) {
