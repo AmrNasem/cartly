@@ -30,6 +30,17 @@ export async function createCoupon(
   });
 }
 
+export async function deleteCoupon(couponId: string): Promise<void> {
+  const coupon = await Coupon.findOneAndUpdate(
+    { _id: couponId, deletedAt: null },
+    { deletedAt: new Date() }
+  );
+
+  if (!coupon) {
+    throw new APIError("Coupon not found", 404);
+  }
+}
+
 export async function toggleCouponActive(
   couponId: string,
   isActive: boolean

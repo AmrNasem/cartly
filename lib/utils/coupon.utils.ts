@@ -43,7 +43,7 @@ export function getCouponDisplayStatus(coupon: {
 
 export function getCouponStatusVariant(
   status: CouponDisplayStatus
-): "success" | "warning" | "destructive" | "default" | "secondary" {
+): "success" | "warning" | "destructive" | "default" | "secondary" | "sky" | "outline" {
   switch (status) {
     case "active":
       return "success";
@@ -52,8 +52,9 @@ export function getCouponStatusVariant(
     case "expired":
       return "destructive";
     case "scheduled":
-      return "secondary";
+      return "sky";
     case "inactive":
+      return "outline";
     default:
       return "default";
   }

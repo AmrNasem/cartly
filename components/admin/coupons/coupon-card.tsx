@@ -1,6 +1,11 @@
+import Link from "next/link";
+import { Pencil } from "lucide-react";
+
 import { CopyCodeButton } from "@/components/admin/coupons/copy-code-button";
 import { CouponStatusSwitch } from "@/components/admin/coupons/coupon-status-switch";
+import { DeleteCoupon } from "@/components/admin/coupons/delete-coupon";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AdminCouponListItem } from "@/lib/types/coupon.types";
 import { getCouponStatusVariant } from "@/lib/utils/coupon.utils";
@@ -36,10 +41,19 @@ export function CouponCard({ coupon }: CouponCardProps) {
           {coupon.discountLabel}
         </p>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-3">
         <div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
           <span>Expires {coupon.expiryLabel}</span>
           <CouponStatusSwitch couponId={coupon.id} isActive={coupon.isActive} />
+        </div>
+        <div className="flex gap-2 border-t border-secondary pt-3">
+          <Button variant="outline" size="sm" className="flex-1" asChild>
+            <Link href={`/admin/coupons/${coupon.id}/edit`}>
+              <Pencil className="size-3.5" />
+              Edit
+            </Link>
+          </Button>
+          <DeleteCoupon couponId={coupon.id} code={coupon.code} />
         </div>
       </CardContent>
     </Card>

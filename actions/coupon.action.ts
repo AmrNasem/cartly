@@ -6,6 +6,7 @@ import { requireAdmin } from "@/lib/auth/guards";
 import { connectDB } from "@/lib/db";
 import {
   createCoupon,
+  deleteCoupon,
   getAdminCoupons,
   toggleCouponActive,
 } from "@/lib/services/coupon.service";
@@ -50,6 +51,23 @@ export async function createCouponAction(
     return {
       success: false,
       error: err instanceof Error ? err.message : "Failed to create coupon",
+    };
+  }
+}
+
+export async function deleteCouponAction(
+  couponId: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    await requireAdmin(true);
+    await connectDB();
+    await deleteCoupon(couponId);
+    revalidatePath(COUPONS_PATH);
+    return { success: true };
+  } catch (err) {
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : "Failed to delete coupon",
     };
   }
 }
