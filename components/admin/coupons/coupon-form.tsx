@@ -64,17 +64,17 @@ export function CouponForm() {
 
   const fieldErrors = state?.fieldErrors ?? {};
 
-  const updateField = <K extends keyof CouponFormInput>(
+  const updateField = useCallback(<K extends keyof CouponFormInput>(
     key: K,
     value: CouponFormInput[K]
   ) => {
     setForm((prev) => ({ ...prev, [key]: value }));
-  };
+  }, []);
 
   const handleSelectChange = useCallback((value: DiscountType) => {
     updateField("discountType", value);
   }
-    , [])
+    , [updateField])
 
   return (
     <form action={formAction} className="space-y-4 md:space-y-6">
