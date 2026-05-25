@@ -7,10 +7,12 @@ import { connectDB } from "@/lib/db";
 import {
   createCoupon,
   deleteCoupon,
+  fetchCoupon,
   getAdminCoupons,
   toggleCouponActive,
+  updateCoupon,
 } from "@/lib/services/coupon.service";
-import { CouponFormState } from "@/lib/types/coupon.types";
+import { CouponFormInput, CouponFormState } from "@/lib/types/coupon.types";
 import {
   parseCouponFormData,
   validateCouponCreate,
@@ -26,7 +28,7 @@ export async function fetchAdminCouponsAction() {
 
 export async function createCouponAction(
   _prev: CouponFormState | null,
-  formData: FormData
+  formData: FormData,
 ): Promise<CouponFormState> {
   try {
     const session = await requireAdmin(true);
@@ -44,7 +46,7 @@ export async function createCouponAction(
     }
 
     await createCoupon(validation.data, session.user.id);
-    // revalidatePath(COUPONS_PATH);
+    revalidatePath(COUPONS_PATH);
 
     return { success: true };
   } catch (err) {
@@ -55,8 +57,40 @@ export async function createCouponAction(
   }
 }
 
+export async function updateCouponAction(
+  _prev: CouponFormState | null,
+  formData: FormData,
+): Promise<CouponFormState> {
+  try {
+    await requireAdmin(true);
+    await connectDB();
+
+    const input = parseCouponFormData(formData);
+    const couponId = String(formData.get("couponId") ?? "");
+
+    console.log("COLLECTED FORM: ", input)
+    const result = await updateCoupon(input, couponId);
+    console.log("COUPON UPDATE: ", result)
+    if (!result.valid)
+      return {
+        success: false,
+        error: "Please fix the highlighted fields",
+        fieldErrors: result.fieldErrors,
+      };
+    revalidatePath(COUPONS_PATH);
+
+    return { success: true };
+  } catch (err) {
+    console.log("COUPON UPDATE ERROR: ", err)
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : "Failed to create coupon",
+    };
+  }
+}
+
 export async function deleteCouponAction(
-  couponId: string
+  couponId: string,
 ): Promise<{ success: boolean; error?: string }> {
   try {
     await requireAdmin(true);
@@ -72,9 +106,25 @@ export async function deleteCouponAction(
   }
 }
 
+export async function getCouponToEditAction(
+  couponId: string,
+): Promise<{ success: boolean; error?: string; data?: CouponFormInput }> {
+  try {
+    await requireAdmin(true);
+    await connectDB();
+    const coupon = await fetchCoupon(couponId);
+    return { success: true, data: coupon };
+  } catch (err) {
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : "Failed to get coupon",
+    };
+  }
+}
+
 export async function toggleCouponActiveAction(
   couponId: string,
-  isActive: boolean
+  isActive: boolean,
 ): Promise<{ success: boolean; error?: string }> {
   try {
     await requireAdmin(true);

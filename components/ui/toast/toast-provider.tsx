@@ -17,17 +17,17 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     ]);
   }, []);
 
-  const success = (title: string, description?: string) =>
-    show({ title, description, variant: "success" });
+  const success = useCallback((title: string, description?: string) =>
+    show({ title, description, variant: "success" }), [show]);
 
-  const error = (title: string, description?: string) =>
-    show({ title, description, variant: "error" });
+  const error = useCallback((title: string, description?: string) =>
+    show({ title, description, variant: "error" }), [show]);
 
-  const info = (title: string, description?: string) =>
-    show({ title, description, variant: "info" });
+  const info = useCallback((title: string, description?: string) =>
+    show({ title, description, variant: "info" }), [show]);
 
-  const remove = (id: string) =>
-    setToasts((prev) => prev.filter((t) => t.id !== id));
+  const remove = useCallback((id: string) =>
+    setToasts((prev) => prev.filter((t) => t.id !== id)), []);
 
   return (
     <ToastContext.Provider value={{ show, success, error, info }}>

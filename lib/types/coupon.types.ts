@@ -69,3 +69,18 @@ export type ValidatedCouponCreate = {
   endDate: Date | null;
   isActive: boolean;
 };
+
+export type RawCoupon = {
+  _id: { toString(): string };
+  code: string;
+  description?: string;
+  discountType: CouponDTO["discountType"];
+  discountValue: number;
+  maxDiscount?: number | null;
+  usageLimit?: number | null;
+  perUserLimit?: number | null;
+  minCartValue?: number | null;
+  startDate?: Date | string | null;
+  endDate?: Date | string | null;
+  isActive: boolean;
+}

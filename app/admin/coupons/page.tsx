@@ -14,7 +14,7 @@ export default async function CouponsPage() {
   const coupons = await fetchAdminCouponsAction();
 
   return (
-    <div className="space-y-4 md:space-y-6 md:max-w-[80%] mx-auto">
+    <div className="space-y-4 md:space-y-6 md:max-w-[80%] mx-auto min-w-full">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-sm font-semibold">Coupons</h2>
