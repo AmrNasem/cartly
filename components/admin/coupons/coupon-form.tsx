@@ -5,7 +5,7 @@ import { Loader2, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import { createCouponAction } from "@/actions/coupon.action";
+import { createCouponAction, updateCouponAction } from "@/actions/coupon.action";
 import { FormField } from "@/components/admin/coupons/form-field";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,7 +23,7 @@ import { useToast } from "@/hooks/use-toast";
 import { DiscountType } from "@/lib/models/coupon";
 import { CouponFormInput, CouponFormState } from "@/lib/types/coupon.types";
 import { generateCouponCode } from "@/lib/utils/coupon.utils";
-import { cn } from "@/lib/utils";
+import { cn, formatDateTimeLocal } from "@/lib/utils";
 
 const initialForm: CouponFormInput = {
   code: "",
@@ -34,7 +34,7 @@ const initialForm: CouponFormInput = {
   usageLimit: "",
   perUserLimit: "",
   minCartValue: "",
-  startDate: "",
+  startDate: formatDateTimeLocal(new Date()),
   endDate: "",
   isActive: true,
 };
@@ -43,24 +43,27 @@ function fieldClass(hasError: boolean) {
   return cn(hasError && "border-destructive bg-red-50");
 }
 
-export function CouponForm() {
-  const [form, setForm] = useState<CouponFormInput>(initialForm);
+export function CouponForm({ data, couponId }: { data?: CouponFormInput, couponId?: string }) {
+  const [form, setForm] = useState<CouponFormInput>(data || initialForm);
   const router = useRouter();
   const { error, success } = useToast();
 
   const [state, formAction, isPending] = useActionState<
     CouponFormState | null,
     FormData
-  >(createCouponAction, null);
+  >(data || couponId ? updateCouponAction : createCouponAction, null);
 
   useEffect(() => {
     if (state?.success) {
-      success("Coupon created", "Your new coupon is ready to use.");
+      if (data)
+        success("Coupon updated successfully");
+      else
+        success("Coupon created", "Your new coupon is ready to use.");
       router.push("/admin/coupons");
     } else if (state?.error && !state.fieldErrors) {
       error("Could not create coupon", state.error);
     }
-  }, [state, router, success, error]);
+  }, [state, router, success, error, data]);
 
   const fieldErrors = state?.fieldErrors ?? {};
 
@@ -71,6 +74,9 @@ export function CouponForm() {
     setForm((prev) => ({ ...prev, [key]: value }));
   }, []);
 
+  console.log("RESPONSE: ", state)
+  console.log("FORM STATE: ", form)
+
   const handleSelectChange = useCallback((value: DiscountType) => {
     updateField("discountType", value);
   }
@@ -80,7 +86,7 @@ export function CouponForm() {
     <form action={formAction} className="space-y-4 md:space-y-6">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-sm font-semibold">New coupon</h2>
+          <h2 className="text-sm font-semibold">{data ? "Edit coupon" : "New coupon"}</h2>
           <p className="text-xs text-muted-foreground">
             Create a discount code for promotions and campaigns.
           </p>
@@ -93,10 +99,12 @@ export function CouponForm() {
             {isPending ? (
               <>
                 <Loader2 className="size-4 animate-spin" />
-                Creating...
+                {data ? "Saving" : "Creating"}...
               </>
             ) : (
-              "Create coupon"
+              data ? "Save coupon"
+                :
+                "Create coupon"
             )}
           </Button>
         </div>
@@ -107,7 +115,10 @@ export function CouponForm() {
           {state.error}
         </p>
       ) : null}
-
+      {
+        couponId &&
+        <input type="hidden" name="couponId" value={couponId} />
+      }
       <input type="hidden" name="discountType" value={form.discountType} />
       <input
         type="hidden"
@@ -140,14 +151,17 @@ export function CouponForm() {
                     onChange={(e) =>
                       updateField("code", e.target.value.toUpperCase())
                     }
-                    className={fieldClass(!!fieldErrors.code)}
+                    disabled={!!data?.code}
+                    className={cn("", fieldClass(!!fieldErrors.code))}
                   />
+                  {!!data?.code && <input type="hidden" name="code" value={data.code} />}
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
                     className="shrink-0"
                     onClick={() => updateField("code", generateCouponCode())}
+                    disabled={!!data?.code}
                   >
                     <Sparkles className="size-3.5" />
                     Generate
@@ -180,13 +194,17 @@ export function CouponForm() {
               <FormField
                 id="discountType"
                 label="Discount type"
+                error={state?.fieldErrors?.discountType}
                 required
               >
                 <Select
                   value={form.discountType}
                   onValueChange={handleSelectChange}
                 >
-                  <SelectTrigger id="discountType">
+                  <SelectTrigger
+                    disabled={!!data?.discountType}
+                    className={cn("", fieldClass(!!fieldErrors.discountType))}
+                    id="discountType">
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -218,7 +236,7 @@ export function CouponForm() {
                   }
                   value={form.discountValue}
                   onChange={(e) => updateField("discountValue", e.target.value)}
-                  className={fieldClass(!!fieldErrors.discountValue)}
+                  className={cn("", fieldClass(!!fieldErrors.discountValue))}
                 />
               </FormField>
 
@@ -238,7 +256,7 @@ export function CouponForm() {
                   placeholder="e.g. 50"
                   value={form.maxDiscount}
                   onChange={(e) => updateField("maxDiscount", e.target.value)}
-                  className={fieldClass(!!fieldErrors.maxDiscount)}
+                  className={cn("", fieldClass(!!fieldErrors.maxDiscount))}
                 />
               </FormField>
             </CardContent>
@@ -266,7 +284,7 @@ export function CouponForm() {
                   placeholder="Unlimited"
                   value={form.usageLimit}
                   onChange={(e) => updateField("usageLimit", e.target.value)}
-                  className={fieldClass(!!fieldErrors.usageLimit)}
+                  className={cn("", fieldClass(!!fieldErrors.usageLimit))}
                 />
               </FormField>
 
@@ -285,7 +303,7 @@ export function CouponForm() {
                   placeholder="Unlimited"
                   value={form.perUserLimit}
                   onChange={(e) => updateField("perUserLimit", e.target.value)}
-                  className={fieldClass(!!fieldErrors.perUserLimit)}
+                  className={cn("", fieldClass(!!fieldErrors.perUserLimit))}
                 />
               </FormField>
 
@@ -305,7 +323,7 @@ export function CouponForm() {
                   placeholder="No minimum"
                   value={form.minCartValue}
                   onChange={(e) => updateField("minCartValue", e.target.value)}
-                  className={fieldClass(!!fieldErrors.minCartValue)}
+                  className={cn("", fieldClass(!!fieldErrors.minCartValue))}
                 />
               </FormField>
             </CardContent>
@@ -330,7 +348,7 @@ export function CouponForm() {
                   type="datetime-local"
                   value={form.startDate}
                   onChange={(e) => updateField("startDate", e.target.value)}
-                  className={fieldClass(!!fieldErrors.startDate)}
+                  className={cn("", fieldClass(!!fieldErrors.startDate))}
                 />
               </FormField>
 
@@ -346,7 +364,7 @@ export function CouponForm() {
                   type="datetime-local"
                   value={form.endDate}
                   onChange={(e) => updateField("endDate", e.target.value)}
-                  className={fieldClass(!!fieldErrors.endDate)}
+                  className={cn("", fieldClass(!!fieldErrors.endDate))}
                 />
               </FormField>
             </CardContent>

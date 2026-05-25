@@ -1,4 +1,5 @@
-import { AdminCouponListItem, CouponDTO } from "../types/coupon.types";
+import { AdminCouponListItem, CouponDTO, CouponFormInput, RawCoupon } from "../types/coupon.types";
+import { formatDateTimeLocal } from "../utils";
 import {
   formatCouponDiscount,
   formatCouponExpiry,
@@ -25,20 +26,7 @@ export function mapCouponDTO(coupon: {
   };
 }
 
-export function mapAdminCouponListItem(coupon: {
-  _id: { toString(): string };
-  code: string;
-  description?: string;
-  discountType: CouponDTO["discountType"];
-  discountValue: number;
-  maxDiscount?: number | null;
-  usageLimit?: number | null;
-  perUserLimit?: number | null;
-  minCartValue?: number | null;
-  startDate?: Date | string | null;
-  endDate?: Date | string | null;
-  isActive: boolean;
-}): AdminCouponListItem {
+export function mapAdminCouponListItem(coupon: RawCoupon): AdminCouponListItem {
   const { status, label } = getCouponDisplayStatus(coupon);
 
   return {
@@ -65,4 +53,20 @@ export function mapAdminCouponListItem(coupon: {
     ),
     expiryLabel: formatCouponExpiry(coupon.endDate),
   };
+}
+
+export function mapCouponFormInput(coupon: RawCoupon): CouponFormInput {
+  return {
+    code: coupon.code,
+    description: String(coupon.description ?? ""),
+    discountType: coupon.discountType,
+    discountValue: String(coupon.discountValue ?? ""),
+    maxDiscount: String(coupon.maxDiscount ?? ""),
+    usageLimit: String(coupon.usageLimit ?? ""),
+    perUserLimit: String(coupon.perUserLimit ?? ""),
+    minCartValue: String(coupon.minCartValue ?? ""),
+    startDate: coupon.startDate ? formatDateTimeLocal(coupon.startDate) : "",
+    endDate: coupon.endDate ? formatDateTimeLocal(coupon.endDate) : "",
+    isActive: coupon.isActive,
+  }
 }

@@ -54,7 +54,6 @@ export function getCouponStatusVariant(
     case "scheduled":
       return "sky";
     case "inactive":
-      return "outline";
     default:
       return "default";
   }
