@@ -24,6 +24,7 @@ import { DiscountType } from "@/lib/models/coupon";
 import { CouponFormInput, CouponFormState } from "@/lib/types/coupon.types";
 import { generateCouponCode } from "@/lib/utils/coupon.utils";
 import { cn, formatDateTimeLocal } from "@/lib/utils";
+import { DeleteCoupon } from "./delete-coupon";
 
 const initialForm: CouponFormInput = {
   code: "",
@@ -389,6 +390,17 @@ export function CouponForm({ data, couponId }: { data?: CouponFormInput, couponI
               </div>
             </CardContent>
           </Card>
+          {
+            data && couponId &&
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-destructive text-sm font-semibold">Danger Area</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <DeleteCoupon className="border-destructive/30 font-semibold w-full" code={data.code} couponId={couponId}>Delete Coupon</DeleteCoupon>
+            </CardContent>
+          </Card>
+          }
         </div>
       </div>
     </form>
