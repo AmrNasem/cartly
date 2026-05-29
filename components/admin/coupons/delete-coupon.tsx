@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useTransition } from "react";
+import { ReactNode, useCallback, useTransition } from "react";
 import { Loader2, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -8,13 +8,16 @@ import { deleteCouponAction } from "@/actions/coupon.action";
 import AlertDialog from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 type DeleteCouponProps = {
   couponId: string;
   code: string;
+  className?: string;
+  children?: ReactNode;
 };
 
-export function DeleteCoupon({ couponId, code }: DeleteCouponProps) {
+export function DeleteCoupon({ couponId, code, className = "", children = "Delete" }: DeleteCouponProps) {
   const { error, success } = useToast();
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -29,7 +32,7 @@ export function DeleteCoupon({ couponId, code }: DeleteCouponProps) {
       }
 
       success("Coupon deleted", `${code} has been removed.`);
-      router.refresh();
+      router.replace("/admin/coupons");
     });
   }, [code, couponId, error, router, success]);
 
@@ -43,7 +46,7 @@ export function DeleteCoupon({ couponId, code }: DeleteCouponProps) {
         type="button"
         variant="outline"
         size="sm"
-        className="flex-1 text-destructive hover:bg-red-50 hover:text-destructive"
+        className={cn("flex-1 text-destructive hover:bg-red-50 hover:text-destructive", className)}
         disabled={isPending}
       >
         {isPending ? (
@@ -51,7 +54,7 @@ export function DeleteCoupon({ couponId, code }: DeleteCouponProps) {
         ) : (
           <Trash2 className="size-3.5" />
         )}
-        Delete
+        {children}
       </Button>
     </AlertDialog>
   );
