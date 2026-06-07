@@ -18,11 +18,11 @@ import CartPageNavigator from "../cart/cart-page-navigator";
 const links = [
   {
     title: "Home",
-    href: "/home",
+    href: "/",
   },
   {
-    title: "Categories",
-    href: "/categories",
+    title: "Shop",
+    href: "/shop",
   },
   {
     title: "About",
