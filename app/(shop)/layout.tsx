@@ -5,7 +5,10 @@ import { Metadata } from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "Homepage",
+  title: {
+    default: "Homepage",
+    template: "%s | Cartly"
+  },
 };
 
 async function Layout({ children }: Readonly<{ children: React.ReactNode }>) {

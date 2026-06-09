@@ -17,10 +17,13 @@ async function Hero() {
             a seamless checkout experience — all in one place.
           </p>
           <div className="flex sm:items-center gap-3 flex-col sm:flex-row">
-            <button className="group font-semibold text-[12px] flex items-center justify-center gap-1 py-2 px-3 cursor-pointer rounded-md text-white bg-primary duration-150 hover:bg-primary/85">
+            <Link
+              href="/shop"
+              className="group font-semibold text-[12px] flex items-center justify-center gap-1 py-2 px-3 cursor-pointer rounded-md text-white bg-primary duration-150 hover:bg-primary/85"
+            >
               <span>Shop Now</span>
               <ArrowRight className="duration-150 group-hover:translate-x-1 size-4" />
-            </button>
+            </Link>
             {
               !session &&
               <Link

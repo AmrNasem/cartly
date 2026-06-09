@@ -66,7 +66,8 @@ function Navbar({ user }: { user: AuthUser | null }) {
 
         <div className="flex items-center gap-3">
           <form
-            action=""
+            action="/shop"
+            method="GET"
             className="text-sm hidden text-muted-foreground sm:flex gap-1 bg-[#ececf0] p-1 rounded-md has-[input#search:focus]:ring-2 ring-[#a1a1a15e] border border-transparent has-[input#search:focus]:border-[#a1a1a1] duration-200"
           >
             <button className="p-px">

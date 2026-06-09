@@ -7,3 +7,5 @@ export type categoryDTO = {
   updatedAt: string;
   id: string;
 };
+
+export type CategoryPath = { id: string; slug: string; name: string }

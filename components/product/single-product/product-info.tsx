@@ -2,32 +2,35 @@ import AddToCart from "@/components/cart/add.to-cart";
 import RemoveFromCart from "@/components/cart/remove-from-cart";
 import { Badge } from "@/components/ui/badge";
 import { getProductStatusVariant } from "@/lib/product/product.utils";
+import { CategoryPath } from "@/lib/types/category.types";
 import { SingleProductDTO } from "@/lib/types/product.types";
 import { Heart, ChevronRight, ShoppingCart, Star } from "lucide-react";
+import Link from "next/link";
 
 function ProductInfo({
   product,
   categoryPath,
 }: {
   product: SingleProductDTO;
-  categoryPath: string[];
+  categoryPath: CategoryPath[];
 }) {
   const stock = getProductStatusVariant(
     product.stock,
     product.lowStockThreshold,
   );
-
+console.log(product, categoryPath)
   return (
     <section>
       <div className="mb-3 rounded-md bg-foreground/70 flex items-center w-fit">
         {categoryPath.map((cat, i) => (
-          <button
-            key={i}
+          <Link
+          key={i}
+            href={`/shop?categorySlug=${cat.slug}`}  
             className="py-1 px-2 text-[12px] text-white flex gap-1 hover:bg-foreground/80 cursor-pointer duration-150 rounded-md items-center"
           >
-            <span>{cat}</span>
+            <span>{cat.name}</span>
             {i + 1 < categoryPath.length && <ChevronRight className="size-3" />}
-          </button>
+          </Link>
         ))}
       </div>
       <div className="flex gap-3 justify-between my-3">
