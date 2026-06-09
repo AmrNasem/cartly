@@ -171,8 +171,10 @@ function Checkout({ className = "" }) {
           >
             Continue to checkout
           </Link>
-          <Button className="w-full block" variant="outline">
-            Continue shopping
+          <Button className="w-full block text-center" variant="outline" asChild>
+            <Link href="/shop" className="">
+              Continue shopping
+            </Link>
           </Button>
         </div>
       </div>

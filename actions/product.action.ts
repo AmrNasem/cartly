@@ -12,7 +12,11 @@ import {
   getReviewsByProductId,
   getRatingStats,
 } from "@/lib/services/product.service";
-import { queryOptions } from "@/lib/types/product.types";
+import {
+  ProductCardDTO,
+  ProductsMeta,
+  queryOptions,
+} from "@/lib/types/product.types";
 
 export async function fetchFeaturedProducts(limit = 8) {
   await connectDB();
@@ -33,9 +37,22 @@ export async function fetchRecommendedProducts(limit = 8) {
 
 export async function fetchProducts(options: queryOptions = {}) {
   await connectDB();
-  // const { products, ...rest } = await getProducts(options);
-  // const enrichedProducts = await enrichProducts(products);
   return getProducts(options);
+}
+
+export async function fetchShopProducts(
+  options: queryOptions = {},
+): Promise<{ products: ProductCardDTO[]; meta: ProductsMeta }> {
+  await connectDB();
+  const { products, meta } = await getProducts({
+    ...options,
+    publishedOnly: true,
+  });
+  const enrichedProducts = await enrichProducts(products);
+  return {
+    products: enrichedProducts.map((product) => mapProductCardDTO(product)),
+    meta,
+  };
 }
 
 

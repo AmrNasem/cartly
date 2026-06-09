@@ -3,6 +3,7 @@ import { mapSingleReviewDTO } from "@/lib/mappers/product.mapper";
 import { queryOptions } from "../types/product.types";
 import mongoose from "mongoose";
 import { computeRatingProgress } from "../product/product.utils";
+import { CategoryPath } from "../types/category.types";
 
 export async function getFeaturedProducts(limit = 8) {
   const products = await Product.find({ deletedAt: null, isPublished: true })
@@ -78,7 +79,7 @@ export async function getRecommendedProducts(userId: string, limit = 12) {
 }
 
 export async function getProducts(options: queryOptions = {}) {
-  const { limit, page, categorySlug, search } = options;
+  const { limit, page, categorySlug, search, publishedOnly } = options;
   const boundedLimit = Math.min(Number(limit) || 12, 50);
   const boundedPage = Math.max(Number(page) || 1, 1);
   const skip = (boundedPage - 1) * boundedLimit;
@@ -86,6 +87,8 @@ export async function getProducts(options: queryOptions = {}) {
   const query: Record<string, any> = {
     deletedAt: null,
   };
+
+  if (publishedOnly) query.isPublished = true;
 
   if (search) query.$text = { $search: search };
 
@@ -128,15 +131,15 @@ export async function getProductBySlug(slug: string) {
 
   const getCategoryPath = (
     categoryId?: string,
-    args: string[] = [],
-  ): string[] => {
+    args: CategoryPath[] = [],
+  ): CategoryPath[] => {
     if (!categoryId) return args;
     const category = categories.find(
       (cat) => cat._id.toString() === categoryId,
     );
     if (!category) return args;
     return getCategoryPath(category.parentId?.toString(), [
-      category.name,
+      { id: category._id.toString(), slug: category.slug, name: category.name },
       ...args,
     ]);
   };

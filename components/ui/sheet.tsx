@@ -76,7 +76,7 @@ function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
 
 function SheetTitle({ className, ...props }: React.ComponentProps<"h2">) {
   return (
-    <h2
+    <DialogPrimitive.Title
       data-slot="sheet-title"
       className={cn("text-base font-semibold leading-none", className)}
       {...props}

@@ -55,4 +55,19 @@ export type ProductFormState = {
   images: ProductImageForm[];
 };
 
-export type queryOptions = { limit?: string; page?: string; categorySlug?: string; search?: string; };
+export type queryOptions = {
+  limit?: string;
+  page?: string;
+  categorySlug?: string;
+  search?: string;
+  publishedOnly?: boolean;
+};
+
+export type ProductsMeta = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+};
