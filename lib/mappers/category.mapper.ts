@@ -6,7 +6,7 @@ export function mapCategoryDTO(category: any): categoryDTO {
     name: category.name,
     description: category.description,
     slug: category.slug,
-    parentId: category.parentId,
+    parentId: category.parentId?.toString() ?? null,
     createdAt: category.createdAt,
     updatedAt: category.updatedAt,
   };

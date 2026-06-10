@@ -55,12 +55,17 @@ export type ProductFormState = {
   images: ProductImageForm[];
 };
 
+export type ShopSort = "newest" | "reviews" | "price" | "price-desc";
+
 export type queryOptions = {
   limit?: string;
   page?: string;
   categorySlug?: string;
   search?: string;
   publishedOnly?: boolean;
+  onSale?: boolean;
+  inStock?: boolean;
+  sort?: ShopSort;
 };
 
 export type ProductsMeta = {
