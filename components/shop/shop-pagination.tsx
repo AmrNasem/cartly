@@ -1,13 +1,12 @@
 import { ProductsMeta } from "@/lib/types/product.types";
-import { buildShopUrl } from "@/lib/utils/shop-url";
+import { ShopFilters, buildShopUrl } from "@/lib/utils/shop-url";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 type ShopPaginationProps = {
   meta: ProductsMeta;
-  search?: string;
-  categorySlug?: string;
+  filters: ShopFilters;
 };
 
 function getPageNumbers(current: number, total: number) {
@@ -24,7 +23,7 @@ function getPageNumbers(current: number, total: number) {
   return Array.from(pages).sort((a, b) => a - b);
 }
 
-function ShopPagination({ meta, search, categorySlug }: ShopPaginationProps) {
+function ShopPagination({ meta, filters }: ShopPaginationProps) {
   if (meta.totalPages <= 1) return null;
 
   const pages = getPageNumbers(meta.page, meta.totalPages);
@@ -35,11 +34,7 @@ function ShopPagination({ meta, search, categorySlug }: ShopPaginationProps) {
       aria-label="Pagination"
     >
       <Link
-        href={buildShopUrl({
-          search,
-          categorySlug,
-          page: meta.page - 1,
-        })}
+        href={buildShopUrl({ ...filters, page: meta.page - 1 })}
         aria-disabled={!meta.hasPrevPage}
         className={cn(
           "inline-flex h-9 w-9 items-center justify-center rounded-md border border-black/10 text-sm transition-colors",
@@ -62,7 +57,7 @@ function ShopPagination({ meta, search, categorySlug }: ShopPaginationProps) {
               <span className="px-2 text-muted-foreground">…</span>
             )}
             <Link
-              href={buildShopUrl({ search, categorySlug, page })}
+              href={buildShopUrl({ ...filters, page })}
               aria-current={page === meta.page ? "page" : undefined}
               className={cn(
                 "inline-flex h-9 min-w-9 items-center justify-center rounded-md border px-2 text-sm transition-colors",
@@ -78,11 +73,7 @@ function ShopPagination({ meta, search, categorySlug }: ShopPaginationProps) {
       })}
 
       <Link
-        href={buildShopUrl({
-          search,
-          categorySlug,
-          page: meta.page + 1,
-        })}
+        href={buildShopUrl({ ...filters, page: meta.page + 1 })}
         aria-disabled={!meta.hasNextPage}
         className={cn(
           "inline-flex h-9 w-9 items-center justify-center rounded-md border border-black/10 text-sm transition-colors",

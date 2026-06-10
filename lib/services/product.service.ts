@@ -1,9 +1,24 @@
 import { CartItem, Category, Order, Product, Review } from "@/lib/models";
 import { mapSingleReviewDTO } from "@/lib/mappers/product.mapper";
-import { queryOptions } from "../types/product.types";
-import mongoose from "mongoose";
+import { queryOptions, ShopSort } from "../types/product.types";
+import mongoose, { SortOrder } from "mongoose";
 import { computeRatingProgress } from "../product/product.utils";
 import { CategoryPath } from "../types/category.types";
+import { mapCategoryDTO } from "../mappers/category.mapper";
+import { getDescendantIds } from "../utils/category-tree";
+
+function getProductSort(sort: ShopSort = "newest"): Record<string, SortOrder> {
+  switch (sort) {
+    case "reviews":
+      return { numOfReviews: -1, createdAt: -1 };
+    case "price":
+      return { price: 1, createdAt: -1 };
+    case "price-desc":
+      return { price: -1, createdAt: -1 };
+    default:
+      return { createdAt: -1 };
+  }
+}
 
 export async function getFeaturedProducts(limit = 8) {
   const products = await Product.find({ deletedAt: null, isPublished: true })
@@ -79,12 +94,21 @@ export async function getRecommendedProducts(userId: string, limit = 12) {
 }
 
 export async function getProducts(options: queryOptions = {}) {
-  const { limit, page, categorySlug, search, publishedOnly } = options;
+  const {
+    limit,
+    page,
+    categorySlug,
+    search,
+    publishedOnly,
+    onSale,
+    inStock,
+    sort = "newest",
+  } = options;
   const boundedLimit = Math.min(Number(limit) || 12, 50);
   const boundedPage = Math.max(Number(page) || 1, 1);
   const skip = (boundedPage - 1) * boundedLimit;
 
-  const query: Record<string, any> = {
+  const query: Record<string, unknown> = {
     deletedAt: null,
   };
 
@@ -93,14 +117,35 @@ export async function getProducts(options: queryOptions = {}) {
   if (search) query.$text = { $search: search };
 
   if (categorySlug) {
-    const category = await Category.findOne({ slug: categorySlug });
-    if (category) query.categoryId = category._id;
+    const category = await Category.findOne({ slug: categorySlug }).lean();
+    if (category) {
+      const allCategories = await Category.find().lean();
+      const categoryDTOs = allCategories.map((item) => mapCategoryDTO(item));
+      const descendantIds = getDescendantIds(
+        categoryDTOs,
+        category._id.toString(),
+      );
+      query.categoryId = {
+        $in: descendantIds.map((id) => new mongoose.Types.ObjectId(id)),
+      };
+    }
   }
+
+  if (onSale) {
+    query.compareAtPrice = { $gt: 0 };
+    query.$expr = { $gt: ["$compareAtPrice", "$price"] };
+  }
+
+  if (inStock) {
+    query.stock = { $gt: 0 };
+  }
+
+  const sortOptions = getProductSort(sort);
 
   const [products, total] = await Promise.all([
     Product.find(query)
       .populate(["categoryId"])
-      .sort({ createdAt: -1 })
+      .sort(sortOptions)
       .limit(boundedLimit)
       .skip(skip)
       .lean(),
