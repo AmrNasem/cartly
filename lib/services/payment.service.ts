@@ -110,6 +110,7 @@ export async function getPaymentStatus({ orderId, paymentIntentId }: { orderId?:
       status: paymentIntent.status,
       displayOrderId: paymentIntent.metadata?.orderId ?? orderId,
       totalAmount: paymentIntent.amount / 100,
+      paymentProvider: payment.provider,
     }
 
     if (result.status === "succeeded") {
