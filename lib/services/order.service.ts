@@ -184,7 +184,7 @@ export async function getOrder(orderId: string, userId: string) {
       ? payments.find((p) => p.paymentIntentId === order.paymentIntentId)
       : payments[0];
 
-    return mapOrderDTO(order, payment?.provider);
+      return mapOrderDTO(order, payment?.provider);
   }
 
   return mapOrderDTO(order);

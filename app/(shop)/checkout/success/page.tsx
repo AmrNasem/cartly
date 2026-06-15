@@ -55,7 +55,7 @@ export default async function SuccessPage({
 
   if (!result) redirect("/");
 
-  const { status, displayOrderId, totalAmount } = result;
+  const { status, displayOrderId, totalAmount, paymentProvider } = result;
 
   const content = STATUS_CONTENT[status] ?? STATUS_CONTENT.default;
 
@@ -101,7 +101,7 @@ export default async function SuccessPage({
               status === "requires_payment_method" &&
                 displayOrderId ? (
                 <Button variant="outline" asChild>
-                  <Link href={`/checkout/payment?orderId=${displayOrderId}`}>
+                  <Link href={`/checkout/${paymentProvider.toLowerCase()}?orderId=${displayOrderId}`}>
                     Try Again
                   </Link>
                 </Button>
