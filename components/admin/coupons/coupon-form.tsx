@@ -75,9 +75,6 @@ export function CouponForm({ data, couponId }: { data?: CouponFormInput, couponI
     setForm((prev) => ({ ...prev, [key]: value }));
   }, []);
 
-  console.log("RESPONSE: ", state)
-  console.log("FORM STATE: ", form)
-
   const handleSelectChange = useCallback((value: DiscountType) => {
     updateField("discountType", value);
   }

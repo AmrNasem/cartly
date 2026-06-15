@@ -13,3 +13,4 @@ export { default as Coupon, CouponSchema } from "./coupon";
 export { default as CouponUsage, CouponUsageSchema } from "./coupon-usage";
 export { default as CartCoupon, CartCouponSchema } from "./cart-coupon";
 export { default as Review, ReviewSchema } from "./review";
+export { default as Payment, PaymentSchema } from "./payment";

@@ -18,7 +18,7 @@ function ProductInfo({
     product.stock,
     product.lowStockThreshold,
   );
-console.log(product, categoryPath)
+
   return (
     <section>
       <div className="mb-3 rounded-md bg-foreground/70 flex items-center w-fit">

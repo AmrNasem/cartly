@@ -42,8 +42,7 @@ export async function updateCoupon(
   const existingCoupon = mapCouponFormInput(coupon);
 
   const validationResult = validateCouponUpdate(existingCoupon, input, usedCount);
-  console.log("ValidationResult COUPON UPDATE: ", validationResult)
-  console.log("COUPON UPDATE couponId: ", couponId)
+
   if (validationResult.valid) {
     const data = validationResult.data;
     const updatedCoupon = await Coupon.findOneAndUpdate({
@@ -76,7 +75,7 @@ export async function fetchCoupon(couponId: string): Promise<CouponFormInput> {
   if (!coupon) {
     throw new APIError("Coupon not found", 404);
   }
-  console.log("GET COUPON: ", coupon)
+
   return mapCouponFormInput(coupon);
 }
 

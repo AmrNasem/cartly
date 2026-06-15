@@ -8,31 +8,14 @@ import Link from "next/link";
 import { FormEvent, useCallback, useState } from "react";
 import { applyCouponAction, removeCartCouponAction } from "@/actions/cart.action";
 import { useToast } from "@/hooks/use-toast";
-import { CouponDTO } from "@/lib/types/coupon.types";
+import {
+  calcCartDiscount,
+  calculateOrderTotals,
+} from "@/lib/utils/order-totals";
+import { createOrderAction } from "@/actions/order.action";
+import { useRouter } from "next/navigation";
 
-export function calcCartDiscount(coupon: CouponDTO, subtotal: number): number {
-  if (!coupon.isActive) return 0;
-
-  if (coupon.minCartValue && subtotal < coupon.minCartValue) {
-    return 0;
-  }
-
-  let discount = 0;
-
-  if (coupon.discountType === "percentage") {
-    discount = (subtotal * coupon.discountValue) / 100;
-  }
-
-  if (coupon.discountType === "fixed") {
-    discount = coupon.discountValue;
-  }
-
-  if (coupon.maxDiscount) {
-    discount = Math.min(discount, coupon.maxDiscount);
-  }
-
-  return Math.max(discount, 0);
-}
+export { calcCartDiscount };
 
 function Checkout({ className = "" }) {
   const [coupon, setCoupon] = useState<{
@@ -42,16 +25,13 @@ function Checkout({ className = "" }) {
   const { items, cartId, appliedCoupon } = useCartStore((state) => state.cart);
   const setAppliedCoupon = useCartStore((state) => state.setAppliedCoupon);
   const { error, success } = useToast();
+  const router = useRouter();
+  const [checkingOut, setCheckingOut] = useState(false);
 
-  const subtotal = items
-    ? items.reduce((acc, i) => acc + i.product.price * i.quantity, 0)
-    : 0;
-  console.log(calcCartDiscount);
-  const tax = subtotal * 0.05;
-  const discount = appliedCoupon
-    ? calcCartDiscount(appliedCoupon.coupon, subtotal)
-    : 0;
-  const total = subtotal + tax - discount;
+  const { subtotal, tax, discount, total } = calculateOrderTotals(
+    items?.map(item => ({ price: item.product.price, quantity: item.quantity  })) ?? [],
+    appliedCoupon?.coupon ?? null,
+  );
 
   const handleCouponApplication = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -84,6 +64,23 @@ function Checkout({ className = "" }) {
       setCoupon((prev) => ({ ...prev, loading: false }));
     }
   }, [appliedCoupon, setAppliedCoupon, error, success, cartId]);
+
+  const handleCheckout = useCallback(async () => {
+    if (!items || items.length === 0) return;
+
+    try {
+      setCheckingOut(true);
+      const order = await createOrderAction({
+        items: items.map(item => ({ id: item.product.id, quantity: item.quantity })),
+        couponCode: appliedCoupon?.coupon.code || null
+      })
+      router.push(`/checkout?orderId=${order.id}`);
+    } catch (err) {
+      error(err instanceof Error ? err.message : "Something went wrong!")
+    } finally {
+      setCheckingOut(false);
+    }
+  }, [error, items, router, appliedCoupon])
 
   return (
     <div className={cn("my-5", className)}>
@@ -165,12 +162,17 @@ function Checkout({ className = "" }) {
           </span>
         </div>
         <div className="p-4 space-y-4">
-          <Link
-            href="/checkout"
-            className="bg-primary text-white hover:bg-primary/90 block w-full font-semibold rounded-md text-sm text-center py-2"
+          <Button
+            disabled={items?.length === 0 || checkingOut}
+            onClick={handleCheckout}
+            className="block w-full font-semibold rounded-md text-sm text-center py-2 cursor-pointer"
           >
-            Continue to checkout
-          </Link>
+            {
+              checkingOut ? <Loader2 className="animate-spin mx-auto" />
+                :
+                "Continue to checkout"
+            }
+          </Button>
           <Button className="w-full block text-center" variant="outline" asChild>
             <Link href="/shop" className="">
               Continue shopping

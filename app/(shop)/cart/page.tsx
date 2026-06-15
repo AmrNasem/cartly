@@ -1,6 +1,7 @@
 import CartItemsWrapper from "@/components/cart/cart-items-wrapper";
 import Checkout from "@/components/cart/checkout";
 import CartItemSkeleton from "@/components/cart/skeleton/cart-item-skeleton";
+import { requireAuth } from "@/lib/auth/guards";
 import { Metadata } from "next";
 import { Suspense } from "react";
 
@@ -8,7 +9,9 @@ export const metadata: Metadata = {
   title: "My Cart - Cartly",
 };
 
-function page() {
+async function page() {
+  await requireAuth();
+
   return (
     <main className="mycontainer grid md:grid-cols-3 gap-4">
       <section className="my-5 col-span-2">

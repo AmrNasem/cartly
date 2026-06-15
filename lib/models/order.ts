@@ -7,9 +7,6 @@ export type OrderStatus =
   | "DELIVERED"
   | "CANCELED";
 
-export type PaymentStatus = "PENDING" | "PAID" | "FAILED" | "REFUNDED";
-export type PaymentMethod = "STRIPE" | "COD";
-
 export interface IOrderItem {
   _id?: mongoose.Types.ObjectId;
   productId: mongoose.Types.ObjectId;
@@ -24,7 +21,7 @@ export type ShippingAddress = {
   country: string;
   city: string;
   street: string;
-  postalCode: string;
+  postalCode?: string;
 };
 
 export interface IOrder extends Document {
@@ -39,10 +36,9 @@ export interface IOrder extends Document {
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date;
-  paymentStatus: PaymentStatus;
-  paymentMethod: PaymentMethod;
-  paymentProvider: string;
   paymentIntentId: string;
+  orderNotes?: string;
+  paidAt?: Date;
 }
 
 const OrderItemSchema = new Schema<IOrderItem>(
@@ -85,21 +81,6 @@ const OrderSchema = new Schema<IOrder>(
       default: "PENDING",
       uppercase: true,
     },
-
-    paymentStatus: {
-      type: String,
-      enum: ["PENDING", "PAID", "FAILED", "REFUNDED"],
-      default: "PENDING",
-      uppercase: true,
-    },
-
-    paymentMethod: {
-      type: String,
-      enum: ["STRIPE", "COD"],
-      uppercase: true,
-      required: true,
-    },
-    paymentProvider: { type: String, default: null },
     paymentIntentId: { type: String, default: null },
 
     shippingAddress: {
@@ -108,8 +89,13 @@ const OrderSchema = new Schema<IOrder>(
       country: String,
       city: String,
       street: String,
-      postalCode: String,
+      postalCode: {
+        type: String,
+        default: null
+      },
     },
+    orderNotes: { type: String, default: "" },
+    paidAt: { type: Date, default: null },
 
     deletedAt: { type: Date, default: null },
   },
