@@ -15,7 +15,7 @@ type CouponCardProps = {
 };
 
 export function CouponCard({ coupon }: CouponCardProps) {
-  console.log("Coupon ", coupon)
+
   return (
     <Card className="flex flex-col justify-between">
       <CardHeader className="space-y-2">

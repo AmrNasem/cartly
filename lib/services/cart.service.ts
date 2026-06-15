@@ -132,16 +132,6 @@ export async function applyCoupon({
     if (coupon.perUserLimit && userUsage >= coupon.perUserLimit)
       throw new Error("This coupon is no longer available");
 
-    // const cartItems = await CartItem.find({ cartId }).populate<{
-    //   productId: { price: number };
-    // }>("productId");
-    // const subtotal = cartItems.reduce(
-    //   (acc, item) => acc + item.productId.price * item.quantity,
-    //   0,
-    // );
-
-    // const discount = coupon.calculateDiscount(subtotal);
-
     await CartCoupon.findOneAndDelete({ cartId });
     const cartCoupon = await CartCoupon.create({ cartId, couponId: coupon._id });
 
@@ -165,4 +155,12 @@ export async function removeCartCoupon({ cartCouponId, cartId }: { cartCouponId:
   } catch (err) {
     throw err;
   }
+}
+
+export async function clearCart(cartId: string) {
+  if (!cartId) throw new Error("cartId is required!");
+
+  const result = await CartItem.deleteMany({ cartId });
+  if (!result?.acknowledged) throw new Error("Couldn't clear cart!");
+  return true;
 }

@@ -173,7 +173,6 @@ export function validateCouponUpdate(
   const fieldErrors: Partial<Record<keyof CouponFormInput | "form", string>> =
     {};
 
-  console.log("VALIDATE UPDATE: ", updates, existing)
   if (updates.code !== existing.code) {
     fieldErrors.code = "Coupon code cannot be changed";
   }

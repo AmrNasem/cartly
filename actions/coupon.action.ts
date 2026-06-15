@@ -68,9 +68,7 @@ export async function updateCouponAction(
     const input = parseCouponFormData(formData);
     const couponId = String(formData.get("couponId") ?? "");
 
-    console.log("COLLECTED FORM: ", input)
     const result = await updateCoupon(input, couponId);
-    console.log("COUPON UPDATE: ", result)
     if (!result.valid)
       return {
         success: false,
@@ -81,7 +79,6 @@ export async function updateCouponAction(
 
     return { success: true };
   } catch (err) {
-    console.log("COUPON UPDATE ERROR: ", err)
     return {
       success: false,
       error: err instanceof Error ? err.message : "Failed to create coupon",

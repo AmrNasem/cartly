@@ -5,6 +5,7 @@ import { connectDB } from "@/lib/db";
 import {
   addToCart,
   applyCoupon,
+  clearCart,
   getCart,
   removeCartCoupon,
   removeFromCart,
@@ -19,19 +20,15 @@ export async function fetchCart() {
 
 export async function removeCartCouponAction(cartCouponId: string, cartId: string) {
   await connectDB();
-  return removeCartCoupon({cartCouponId, cartId});
+  return removeCartCoupon({ cartCouponId, cartId });
 }
 
 export async function updateQuantityAction(
   productId: string,
   quantity: number,
 ) {
-  // try {
   await connectDB();
   return updateQuantity(productId, quantity);
-  // } catch (err) {
-  //   throw err;
-  // }
 }
 
 export async function removeFromCartAction(productId: string) {
@@ -56,4 +53,10 @@ export async function applyCouponAction({
   await requireAuth(true);
   await connectDB();
   return applyCoupon({ cartId, couponCode });
+}
+
+export async function clearCartAction(cartId: string) {
+  await requireAuth(true);
+  await connectDB();
+  return clearCart(cartId);
 }
