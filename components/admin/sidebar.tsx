@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { adminNavItems } from "./nav-items";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
+import Image from "next/image";
 
 export function AdminSidebar() {
   const pathname = usePathname();
@@ -13,9 +14,8 @@ export function AdminSidebar() {
   return (
     <aside className="flex h-full flex-col border-r border-black/5 bg-background/80 px-3 py-4">
       <Link href="/admin" className="mb-4 flex items-center gap-2 px-2">
-        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-xs font-semibold text-white">
-          C
-        </span>
+        <Image src="/logo.png" alt="Cartly" width={32} height={32} />
+
         <div className="flex flex-col leading-tight">
           <span className="text-sm font-semibold">Cartly</span>
           <span className="text-[11px] text-muted-foreground">Admin</span>
@@ -37,7 +37,7 @@ export function AdminSidebar() {
               href={item.href}
               className={cn(
                 "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
-                isActive && "bg-primary/5 text-foreground"
+                isActive && "bg-primary/5 text-foreground",
               )}
             >
               <Icon className="h-4 w-4" />
@@ -59,7 +59,7 @@ export function AdminSidebar() {
               href={item.href}
               className={cn(
                 "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-destructive/90 transition-colors hover:bg-destructive/5",
-                isActive && "bg-destructive/10"
+                isActive && "bg-destructive/10",
               )}
             >
               <Icon className="h-4 w-4" />
@@ -71,4 +71,3 @@ export function AdminSidebar() {
     </aside>
   );
 }
-
