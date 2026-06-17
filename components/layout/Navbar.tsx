@@ -14,6 +14,7 @@ import {
 import Guard from "./guard";
 import LogoutButton from "../auth/logout-button";
 import CartPageNavigator from "../cart/cart-page-navigator";
+import Image from "next/image";
 
 const links = [
   {
@@ -45,9 +46,7 @@ function Navbar({ user }: { user: AuthUser | null }) {
             <Menu className="size-4" />
           </button>
           <Link href="/" className="flex gap-1 items-center">
-            <span className="w-6 h-6 rounded-lg bg-primary text-white flex justify-center items-center">
-              C
-            </span>
+            <Image src="/logo.png" alt="Cartly" width={32} height={32} />
             <h4 className="font-semibold">Cartly</h4>
           </Link>
         </div>
