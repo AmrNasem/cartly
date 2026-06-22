@@ -18,7 +18,7 @@ export function OrderProductPreview({
         {previewItems.map((item, index) => (
           <figure
             key={`${item.title}-${index}`}
-            className="relative size-12 overflow-hidden rounded-md border-2 border-background bg-muted"
+            className="shadow-md relative size-12 overflow-hidden rounded-md bg-muted"
           >
             <OrderItemThumbnail
               src={item.thumbnail}

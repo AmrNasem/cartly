@@ -190,7 +190,7 @@ export async function getOrder(orderId: string, userId: string) {
       ? payments.find((p) => p.paymentIntentId === order.paymentIntentId)
       : payments[0];
 
-      return mapOrderDTO(order, payment?.provider);
+    return mapOrderDTO(order, payment?.provider);
   }
 
   return mapOrderDTO(order);
@@ -218,9 +218,11 @@ export async function getUserOrders(userId: string) {
     }
   }
 
-  return orders.map((order) =>
-    mapOrderListItemDTO(order, paymentByOrderId.get(order._id.toString())),
-  );
+  return orders
+    .filter((order) => paymentByOrderId.get(order._id.toString()))
+    .map((order) =>
+      mapOrderListItemDTO(order, paymentByOrderId.get(order._id.toString())),
+    );
 }
 
 export async function getOrderByIdForUser(orderId: string, userId: string) {

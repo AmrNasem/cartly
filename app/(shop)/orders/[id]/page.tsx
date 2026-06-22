@@ -5,7 +5,7 @@ import { OrderDetailView } from "@/components/orders/order-detail-view";
 import { requireAuth } from "@/lib/auth/guards";
 
 export const metadata: Metadata = {
-  title: "Order Details - Cartly",
+  title: "Order Details",
 };
 
 type OrderDetailPageProps = {

@@ -5,7 +5,7 @@ import { OrdersEmpty } from "@/components/orders/orders-empty";
 import { requireAuth } from "@/lib/auth/guards";
 
 export const metadata: Metadata = {
-  title: "My Orders - Cartly",
+  title: "My Orders",
 };
 
 export default async function OrdersPage() {
