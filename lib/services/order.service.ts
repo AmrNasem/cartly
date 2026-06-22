@@ -1,9 +1,15 @@
 import { APIError } from "@/lib/api/errors";
 import { TAX_RATE } from "@/lib/utils/order-totals";
+import { canCancelOrder } from "@/lib/utils/order.utils";
 import { Coupon, CouponUsage, Order, Payment, Product } from "@/lib/models";
 import { CreateOrderInput } from "../types/checkout.types";
-import { mapOrderDTO } from "../mappers/order.mapper";
+import {
+  mapOrderDTO,
+  mapOrderDetailDTO,
+  mapOrderListItemDTO,
+} from "../mappers/order.mapper";
 import { retrieveClientSecret } from "./payment.service";
+import { addOrderItemsToCart } from "./cart.service";
 
 export async function createOrder({
   userId,
@@ -188,4 +194,89 @@ export async function getOrder(orderId: string, userId: string) {
   }
 
   return mapOrderDTO(order);
+}
+
+async function getLatestPayment(orderId: string) {
+  return Payment.findOne({ orderId }).sort({ createdAt: -1 });
+}
+
+export async function getUserOrders(userId: string) {
+  const orders = await Order.find({ userId, deletedAt: null })
+    .sort({ createdAt: -1 })
+    .populate("items.productId");
+
+  const orderIds = orders.map((order) => order._id);
+  const payments = await Payment.find({ orderId: { $in: orderIds } }).sort({
+    createdAt: -1,
+  });
+
+  const paymentByOrderId = new Map<string, (typeof payments)[number]>();
+  for (const payment of payments) {
+    const key = payment.orderId.toString();
+    if (!paymentByOrderId.has(key)) {
+      paymentByOrderId.set(key, payment);
+    }
+  }
+
+  return orders.map((order) =>
+    mapOrderListItemDTO(order, paymentByOrderId.get(order._id.toString())),
+  );
+}
+
+export async function getOrderByIdForUser(orderId: string, userId: string) {
+  const order = await Order.findOne({
+    _id: orderId,
+    userId,
+    deletedAt: null,
+  }).populate("items.productId");
+
+  if (!order) return null;
+
+  const payment = await getLatestPayment(orderId);
+  return mapOrderDetailDTO(order, payment);
+}
+
+export async function cancelOrder(orderId: string, userId: string) {
+  const order = await Order.findOne({
+    _id: orderId,
+    userId,
+    deletedAt: null,
+  });
+
+  if (!order) throw new APIError("Order not found!", 404);
+  if (!canCancelOrder(order.status)) {
+    throw new APIError("This order can no longer be cancelled.", 400);
+  }
+
+  order.status = "CANCELED";
+  await order.save();
+
+  await Payment.updateMany(
+    { orderId: order._id, status: "PENDING" },
+    { status: "FAILED" },
+  );
+
+  return { id: order._id.toString() };
+}
+
+export async function buyAgainFromOrder(orderId: string, userId: string) {
+  const order = await Order.findOne({
+    _id: orderId,
+    userId,
+    deletedAt: null,
+  });
+
+  if (!order) throw new APIError("Order not found!", 404);
+
+  const items = order.items.map((item) => ({
+    productId: item.productId.toString(),
+    quantity: item.quantity,
+  }));
+
+  const addedItems = await addOrderItemsToCart(userId, items);
+
+  return {
+    message: "Items added to cart!",
+    addedCount: addedItems.length,
+  };
 }
