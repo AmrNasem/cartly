@@ -33,9 +33,7 @@ export function OrderActions({
         success("Order cancelled successfully.");
         router.refresh();
       } catch (err) {
-        error(
-          err instanceof Error ? err.message : "Failed to cancel order.",
-        );
+        error(err instanceof Error ? err.message : "Failed to cancel order.");
       }
     });
   }, [orderId, error, success, router]);
@@ -68,9 +66,11 @@ export function OrderActions({
           : "flex flex-wrap gap-2"
       }
     >
-      <Button asChild size={buttonSize} variant="outline">
-        <Link href={`/orders/${orderId}`}>View Details</Link>
-      </Button>
+      {layout === "card" && (
+        <Button asChild size={buttonSize} variant="outline">
+          <Link href={`/orders/${orderId}`}>View Details</Link>
+        </Button>
+      )}
 
       {canCancelOrder(status) && (
         <RadixAlertDialog.Root>
@@ -113,11 +113,7 @@ export function OrderActions({
       )}
 
       {canBuyAgain(status) && (
-        <Button
-          size={buttonSize}
-          onClick={handleBuyAgain}
-          disabled={isPending}
-        >
+        <Button size={buttonSize} onClick={handleBuyAgain} disabled={isPending}>
           {isPending ? (
             <>
               <Loader2 className="size-4 animate-spin" />
