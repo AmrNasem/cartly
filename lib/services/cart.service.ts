@@ -1,5 +1,5 @@
 import { mapCartCouponDTO, mapCartItemDTO } from "../mappers/cart.mapper";
-import { Cart, CartCoupon, Coupon, CouponUsage } from "../models";
+import { Cart, CartCoupon, Coupon, CouponUsage, Product } from "../models";
 import { CartItem } from "../models/cart";
 
 export async function getCart(userId: string) {
@@ -155,6 +155,50 @@ export async function removeCartCoupon({ cartCouponId, cartId }: { cartCouponId:
   } catch (err) {
     throw err;
   }
+}
+
+export async function addOrderItemsToCart(
+  userId: string,
+  items: { productId: string; quantity: number }[],
+) {
+  let cart = await Cart.findOne({ userId });
+  if (!cart) {
+    cart = await Cart.create({ userId });
+  }
+
+  const addedItems = [];
+
+  for (const item of items) {
+    const product = await Product.findOne({
+      _id: item.productId,
+      deletedAt: null,
+    });
+    if (!product) continue;
+
+    const existing = await CartItem.findOne({
+      cartId: cart._id,
+      productId: item.productId,
+    });
+
+    if (existing) {
+      existing.quantity += item.quantity;
+      await existing.save();
+      await existing.populate("productId");
+      addedItems.push(mapCartItemDTO(existing.toObject()));
+      continue;
+    }
+
+    const created = await CartItem.create({
+      productId: item.productId,
+      cartId: cart._id,
+      userId,
+      quantity: item.quantity,
+    });
+    await created.populate("productId");
+    addedItems.push(mapCartItemDTO(created.toObject()));
+  }
+
+  return addedItems;
 }
 
 export async function clearCart(cartId: string) {

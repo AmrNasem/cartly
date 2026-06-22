@@ -119,6 +119,11 @@ function Navbar({ user }: { user: AuthUser | null }) {
                     </DropdownMenuItem>
                   </Link>
                 </Guard>
+                <Link href="/orders">
+                  <DropdownMenuItem className="text-xs">
+                    My Orders
+                  </DropdownMenuItem>
+                </Link>
                 <DropdownMenuItem className="text-xs">
                   Account settings
                 </DropdownMenuItem>
