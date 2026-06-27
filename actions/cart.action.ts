@@ -1,6 +1,7 @@
 "use server";
 
 import { requireAuth } from "@/lib/auth/guards";
+import { getSession } from "@/lib/auth/session";
 import { connectDB } from "@/lib/db";
 import {
   addToCart,
@@ -13,7 +14,9 @@ import {
 } from "@/lib/services/cart.service";
 
 export async function fetchCart() {
-  const session = await requireAuth();
+  const session = await getSession();
+  if (!session) return {payload: null};
+
   await connectDB();
   return getCart(session.user.id);
 }

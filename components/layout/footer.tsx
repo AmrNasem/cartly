@@ -6,15 +6,11 @@ import { Separator } from "../ui/separator";
 const quickLinks = [
   { title: "Home", href: "/" },
   { title: "Shop", href: "/shop" },
-  { title: "About", href: "/about" },
-  { title: "Contact", href: "/contact" },
 ];
 
 const supportLinks = [
   { title: "My Orders", href: "/orders" },
   { title: "Cart", href: "/cart" },
-  { title: "Shipping Info", href: "/contact" },
-  { title: "Returns Policy", href: "/contact" },
 ];
 
 const socialLinks = [
