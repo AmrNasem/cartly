@@ -7,7 +7,7 @@ import { useCartStore } from "@/store/cart-store";
 import { CartState } from "@/lib/types/cart.types";
 import { CartItemDTO } from "@/lib/types/product.types";
 
-function CartItems({ className = "", cart }: { className?: string, cart: CartState & {items: CartItemDTO[]} }) {
+function CartItems({ className = "", cart }: { className?: string, cart: (CartState & { items: CartItemDTO[] }) | null }) {
   const setCart = useCartStore(state => state.setCart);
   const cartedProducts = useCartStore(state => state.cart.items);
 
@@ -21,7 +21,7 @@ function CartItems({ className = "", cart }: { className?: string, cart: CartSta
   return (
     <div className={cn("space-y-4", className)}>
       {
-        cart.items.length ? (
+        cart?.items.length ? (
           cart.items.map((item) => <CartItem key={item.id} item={item} />)
         ) : (
           <div className="flex md:block justify-center flex-col min-h-75">
