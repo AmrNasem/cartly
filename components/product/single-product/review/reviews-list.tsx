@@ -7,7 +7,7 @@ import { fetchReviewsByProductId } from "@/actions/product.action";
 import { Loader2 } from "lucide-react";
 import SingleReviewSkeleton from "./skeleton/single-review";
 
-function ReviewsList({ productId, initialReviews, initialPagination }: { productId: string; initialReviews: SingleReviewDTO[]; initialPagination: { total: number; totalPages: number, page: number } }) {
+function ReviewsList({ productId, initialReviews, initialPagination }: { productId: string; initialReviews: SingleReviewDTO[]; initialPagination: { total: number; totalPages: number, page: number, limit: number } }) {
   const [reviews, setReviews] = useState<SingleReviewDTO[]>(initialReviews);
   const [pagination, setPagination] = useState(initialPagination);
 
@@ -16,12 +16,12 @@ function ReviewsList({ productId, initialReviews, initialPagination }: { product
   const loadMore = useCallback(() => {
     startTransition(async () => {
       const nextPage = pagination.page + 1;
-      const data = await fetchReviewsByProductId(productId, nextPage);
+      const data = await fetchReviewsByProductId(productId, nextPage, pagination.limit);
 
       setReviews(prev => [...prev, ...data.reviews]);
       setPagination(data.pagination)
     });
-  }, [pagination.page, productId]);
+  }, [pagination, productId]);
 
   if (!reviews.length) return;
 

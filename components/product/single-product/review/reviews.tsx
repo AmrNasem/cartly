@@ -10,7 +10,7 @@ async function Reviews({ productId }: { productId: string }) {
   const { reviews, pagination } = await fetchReviewsByProductId(
     productId,
     1,
-    4,
+    5,
   );
 
   return (
