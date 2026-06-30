@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ToastProvider } from "@/components/ui/toast/toast-provider";
+import WishlistProvider from "@/providers/wishilst-provider";
 
 export const metadata: Metadata = {
   title: {
@@ -19,7 +20,9 @@ export default function RootLayout({
   return (
     <html lang="ar">
       <body className={`antialiased`}>
-        <ToastProvider>{children}</ToastProvider>
+        <ToastProvider>
+          <WishlistProvider>{children}</WishlistProvider>
+        </ToastProvider>
       </body>
     </html>
   );

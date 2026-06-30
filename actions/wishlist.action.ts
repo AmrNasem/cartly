@@ -7,6 +7,7 @@ import { enrichProducts } from "@/lib/product/enrich-product";
 import {
   addToWishlist,
   getWishlist,
+  getWishlistCount,
   removeFromWishList,
 } from "@/lib/services/wishlist.service";
 
@@ -17,7 +18,7 @@ export async function getWishlistAction() {
   const enrichedProducts = await enrichProducts(
     wishlist.map((item) => item.productId),
   );
-  console.log("GET WISHLIST:  ", enrichedProducts);
+
   return wishlist.map((item) => {
     const productId = enrichedProducts.find((product) =>
       product._id.equals(item.productId._id),
@@ -27,6 +28,12 @@ export async function getWishlistAction() {
       productId,
     });
   });
+}
+
+export async function getWishlistCountAction() {
+  const session = await requireAuth();
+  await connectDB();
+  return getWishlistCount(session.user.id);
 }
 
 export async function addToWishListAction(productId: string) {

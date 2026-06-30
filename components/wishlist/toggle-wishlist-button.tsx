@@ -2,9 +2,11 @@
 
 import {
   addToWishListAction,
+  getWishlistCountAction,
   removeFromWishListAction,
 } from "@/actions/wishlist.action";
 import { useToast } from "@/hooks/use-toast";
+import useWishlist from "@/hooks/wishlist/use-wishlist";
 import { cn } from "@/lib/utils";
 import { Heart } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -22,11 +24,13 @@ function ToggleWishlistButton({
   const [isPending, startTransition] = useTransition();
   const { error, success } = useToast();
   const [isWishlistedState, setIsWishlistedState] = useState(isWishlisted);
-  const router = useRouter()
+  const router = useRouter();
+  const { setWishlistCount } = useWishlist();
 
   const handleClick = () => {
-    const buttonState = isWishlistedState
+    const buttonState = isWishlistedState;
     setIsWishlistedState((prev) => !prev);
+    setWishlistCount((prev) => (buttonState ? prev - 1 : prev + 1));
     startTransition(async () => {
       try {
         if (buttonState) {
@@ -38,9 +42,8 @@ function ToggleWishlistButton({
           if (typeof res === "string") throw new Error(res);
           success("Product added to wishlist!");
         }
-        router.refresh()
+        router.refresh();
       } catch (err) {
-        setIsWishlistedState((prev) => !prev);
         console.log("Error adding to wishlist:", err);
         error(
           err instanceof Error
@@ -48,6 +51,8 @@ function ToggleWishlistButton({
             : "Failed to add product to wishlist!",
         );
       }
+      const wishlistCount = await getWishlistCountAction();
+      setWishlistCount(wishlistCount)
     });
   };
 

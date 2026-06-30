@@ -23,7 +23,9 @@ function CartItem({
 
   return (
     <article
-      className={cn("flex-col sm:flex-row flex gap-2 border border-muted rounded-lg relative")}
+      className={cn(
+        "flex-col sm:flex-row flex gap-2 border border-muted rounded-lg relative",
+      )}
     >
       <ToggleWishlistButton
         className="absolute end-2 top-2"
@@ -38,7 +40,7 @@ function CartItem({
         <Image
           src={item.product.thumbnail}
           fill
-          sizes=""
+          sizes="(max-width: 640px) 100vw, 25vw"
           alt={item.product.title}
           className="object-cover block group-hover:scale-[1.03] duration-150 -z-10"
         />
