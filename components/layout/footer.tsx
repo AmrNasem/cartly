@@ -11,6 +11,7 @@ const quickLinks = [
 const supportLinks = [
   { title: "My Orders", href: "/orders" },
   { title: "Cart", href: "/cart" },
+  { title: "My Wishlist", href: "/wishlist" },
 ];
 
 const socialLinks = [

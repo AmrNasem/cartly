@@ -15,6 +15,7 @@ import LogoutButton from "../auth/logout-button";
 import CartPageNavigator from "../cart/cart-page-navigator";
 import Image from "next/image";
 import SearchInput from "./search-input";
+import { Heart } from "lucide-react";
 
 function Navbar({ user }: { user: AuthUser | null }) {
   console.log(user);
@@ -31,7 +32,10 @@ function Navbar({ user }: { user: AuthUser | null }) {
         <SearchInput />
 
         <div className="flex items-center gap-3">
-          <CartPageNavigator />
+        <CartPageNavigator />
+          <Link href="/wishlist" className="relative hover:bg-[#e9ebef] p-1 rounded-md duration-150 cursor-pointer">
+            <Heart className="size-4 text-foreground" />
+          </Link>
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

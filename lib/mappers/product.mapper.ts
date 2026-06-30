@@ -20,7 +20,7 @@ export function mapProductCardDTO(product: any): ProductCardDTO {
     numOfReviews: product.numOfReviews,
     averageRate: product.averageRate,
     isCarted: product.isCarted || false,
-    isWishlist: product.isWishlist || false,
+    isWishlist: product.isWishList || false,
   };
 }
 

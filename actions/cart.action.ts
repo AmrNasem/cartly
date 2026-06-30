@@ -3,6 +3,8 @@
 import { requireAuth } from "@/lib/auth/guards";
 import { getSession } from "@/lib/auth/session";
 import { connectDB } from "@/lib/db";
+import { mapCartItemDTO } from "@/lib/mappers/cart.mapper";
+import { enrichProducts } from "@/lib/product/enrich-product";
 import {
   addToCart,
   applyCoupon,
@@ -15,13 +17,33 @@ import {
 
 export async function fetchCart() {
   const session = await getSession();
-  if (!session) return {payload: null};
+  if (!session) return { payload: null };
 
   await connectDB();
-  return getCart(session.user.id);
+  const { payload, ...cart } = await getCart(session.user.id);
+  const enrichedItems = await enrichProducts(
+    payload.items.map((item) => item.productId),
+  );
+  return {
+    ...cart,
+    payload: {
+      ...payload,
+      items: payload.items.map((item) =>
+        mapCartItemDTO({
+          ...item,
+          productId: enrichedItems.find((product) =>
+            product._id.equals(item.productId._id),
+          ),
+        }),
+      ),
+    },
+  };
 }
 
-export async function removeCartCouponAction(cartCouponId: string, cartId: string) {
+export async function removeCartCouponAction(
+  cartCouponId: string,
+  cartId: string,
+) {
   await connectDB();
   return removeCartCoupon({ cartCouponId, cartId });
 }

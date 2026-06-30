@@ -1,11 +1,13 @@
 import { ProductCardDTO } from "@/lib/types/product.types";
-import { Heart, ShoppingCart, Star } from "lucide-react";
+import { ShoppingCart, Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import RemoveFromCart from "../cart/remove-from-cart";
 import AddToCart from "../cart/add.to-cart";
+import ToggleWishlistButton from "../wishlist/toggle-wishlist-button";
 
 function ProductCard({ product }: { product: ProductCardDTO }) {
+  console.log(product);
   return (
     <article className="rounded-lg shadow-lg hover:shadow-xl duration-200 hover:-translate-y-1 block group h-full relative">
       <Link
@@ -14,9 +16,11 @@ function ProductCard({ product }: { product: ProductCardDTO }) {
       />
 
       <figure className="relative h-48 overflow-hidden rounded-t-lg">
-        <button className="z-20 md:opacity-0 group-hover:opacity-100 absolute end-2 top-2 w-7 h-7 flex items-center justify-center rounded-full bg-secondary hover:bg-secondary/80 duration-150 cursor-pointer">
-          <Heart className="size-4 text-muted-primary" />
-        </button>
+        <ToggleWishlistButton
+          isWishlisted={product.isWishlist ?? false}
+          productId={product.id}
+          className="absolute end-2 top-2 md:opacity-0 group-hover:opacity-100"
+        />
         <div className="flex gap-2 absolute top-2 start-2">
           {product.isNew && (
             <span className="rounded-md text-white bg-primary text-[11px] px-2 py-0.5 block">
@@ -37,12 +41,11 @@ function ProductCard({ product }: { product: ProductCardDTO }) {
           className="object-cover block group-hover:scale-[1.03] duration-150 -z-10"
         />
         <div className="z-20 md:opacity-0 group-hover:opacity-100 md:translate-y-1 group-hover:translate-y-0 absolute bottom-0 start-0 h-[22%] mx-auto w-full bg-linear-to-b from-transparent px-2 to-foreground duration-150">
-          {/* <button className="bg-primary hover:bg-primary/80 duration-200 text-white flex gap-2 items-center justify-center w-full text-sm p-1 rounded-md cursor-pointer">
-            <ShoppingCart className="size-4" />
-            <span>Add to Cart</span>
-          </button> */}
           {product.isCarted ? (
-            <RemoveFromCart productId={product.id} className="duration-200 flex gap-2 items-center justify-center w-full text-sm p-1 rounded-md">
+            <RemoveFromCart
+              productId={product.id}
+              className="duration-200 flex gap-2 items-center justify-center w-full text-sm p-1 rounded-md"
+            >
               <ShoppingCart fill="" className="size-4" />
               <span>Remove from Cart</span>
             </RemoveFromCart>

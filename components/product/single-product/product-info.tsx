@@ -1,10 +1,11 @@
 import AddToCart from "@/components/cart/add.to-cart";
 import RemoveFromCart from "@/components/cart/remove-from-cart";
 import { Badge } from "@/components/ui/badge";
+import ToggleWishlistButton from "@/components/wishlist/toggle-wishlist-button";
 import { getProductStatusVariant } from "@/lib/product/product.utils";
 import { CategoryPath } from "@/lib/types/category.types";
 import { SingleProductDTO } from "@/lib/types/product.types";
-import { Heart, ChevronRight, ShoppingCart, Star } from "lucide-react";
+import { ChevronRight, ShoppingCart, Star } from "lucide-react";
 import Link from "next/link";
 
 function ProductInfo({
@@ -24,8 +25,8 @@ function ProductInfo({
       <div className="mb-3 rounded-md bg-foreground/70 flex items-center w-fit">
         {categoryPath.map((cat, i) => (
           <Link
-          key={i}
-            href={`/shop?categorySlug=${cat.slug}`}  
+            key={i}
+            href={`/shop?categorySlug=${cat.slug}`}
             className="py-1 px-2 text-[12px] text-white flex gap-1 hover:bg-foreground/80 cursor-pointer duration-150 rounded-md items-center"
           >
             <span>{cat.name}</span>
@@ -35,13 +36,10 @@ function ProductInfo({
       </div>
       <div className="flex gap-3 justify-between my-3">
         <h2 className="text-3xl font-semibold">{product.title}</h2>
-        <button className="size-7 min-w-7 min-h-7 flex items-center justify-center rounded-full bg-secondary hover:bg-secondary/80 duration-150 cursor-pointer">
-          {product.isWishList ? (
-            <Heart fill="red" color="red" className={`size-4`} />
-          ) : (
-            <Heart className={`size-4 text-muted-primary`} />
-          )}
-        </button>
+        <ToggleWishlistButton
+          productId={product.id}
+          isWishlisted={product.isWishList}
+        />
       </div>
       <div className="text-muted-foreground text-[12px]">
         {product.description?.split("\n").map((paragraph, i) => (
