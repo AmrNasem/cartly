@@ -7,6 +7,10 @@ export async function getWishlist(userId: string) {
   return wishlist;
 }
 
+export function getWishlistCount(userId: string) {
+  return FavoriteItem.countDocuments({userId})
+}
+
 export async function addToWishlist(userId: string, productId: string): Promise<WishlistItemDTO | string> {
   const existingWishlistItem = await FavoriteItem.findOne({userId, productId});
   if (existingWishlistItem) {

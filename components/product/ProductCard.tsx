@@ -7,7 +7,6 @@ import AddToCart from "../cart/add.to-cart";
 import ToggleWishlistButton from "../wishlist/toggle-wishlist-button";
 
 function ProductCard({ product }: { product: ProductCardDTO }) {
-  console.log(product);
   return (
     <article className="rounded-lg shadow-lg hover:shadow-xl duration-200 hover:-translate-y-1 block group h-full relative">
       <Link

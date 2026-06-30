@@ -1,5 +1,6 @@
 import WishlistItem from "./wish-list-item";
 import { getWishlistAction } from "@/actions/wishlist.action";
+import WishlistClient from "./wishlist-client";
 
 async function Wishlist() {
   const wishlist = await getWishlistAction();
@@ -11,11 +12,7 @@ async function Wishlist() {
       </h2>
     </div>
   ) : (
-    <div className="space-y-4">
-      {wishlist.map((item) => (
-        <WishlistItem key={item.id} item={item} />
-      ))}
-    </div>
+    <WishlistClient wishlist={wishlist} />
   );
 }
 
