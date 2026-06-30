@@ -6,10 +6,18 @@ import { useEffect } from "react";
 import { useCartStore } from "@/store/cart-store";
 import { CartState } from "@/lib/types/cart.types";
 import { CartItemDTO } from "@/lib/types/product.types";
+import RemoveFromCart from "./remove-from-cart";
+import { Trash2 } from "lucide-react";
 
-function CartItems({ className = "", cart }: { className?: string, cart: (CartState & { items: CartItemDTO[] }) | null }) {
-  const setCart = useCartStore(state => state.setCart);
-  const cartedProducts = useCartStore(state => state.cart.items);
+function CartItems({
+  className = "",
+  cart,
+}: {
+  className?: string;
+  cart: (CartState & { items: CartItemDTO[] }) | null;
+}) {
+  const setCart = useCartStore((state) => state.setCart);
+  const cartedProducts = useCartStore((state) => state.cart.items);
 
   useEffect(() => {
     if (cart && !cartedProducts) {
@@ -17,20 +25,26 @@ function CartItems({ className = "", cart }: { className?: string, cart: (CartSt
     }
   }, [cart, cartedProducts, setCart]);
 
-
   return (
     <div className={cn("space-y-4", className)}>
-      {
-        cart?.items.length ? (
-          cart.items.map((item) => <CartItem key={item.id} item={item} />)
-        ) : (
-          <div className="flex md:block justify-center flex-col min-h-75">
-            <p className="text-xl text-center p-2 md:py-4 bg-muted/20 text-muted-foreground rounded-xl border border-muted">
-              Your cart is empty
-            </p>
-          </div>
-        )
-      }
+      {cart?.items.length ? (
+        cart.items.map((item) => (
+          <CartItem key={item.id} item={item}>
+            <RemoveFromCart
+              className="z-10 cursor-pointer p-2 [&_svg]:size-3"
+              productId={item.product.id}
+            >
+              <Trash2 />
+            </RemoveFromCart>
+          </CartItem>
+        ))
+      ) : (
+        <div className="flex md:block justify-center flex-col min-h-75">
+          <p className="text-xl text-center p-2 md:py-4 bg-muted/20 text-muted-foreground rounded-xl border border-muted">
+            Your cart is empty
+          </p>
+        </div>
+      )}
     </div>
   );
 }

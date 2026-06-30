@@ -1,14 +1,21 @@
 import { CartItemDTO } from "@/lib/types/product.types";
 import Image from "next/image";
 import Link from "next/link";
-import { Star, Trash2 } from "lucide-react";
+import { Star } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { getProductStatusVariant } from "@/lib/product/product.utils";
 import { cn } from "@/lib/utils";
-import RemoveFromCart from "./remove-from-cart";
 import UpdateQuantity from "./update-quantity";
+import ToggleWishlistButton from "../wishlist/toggle-wishlist-button";
+import { WishlistItemDTO } from "@/lib/types/wishlist.types";
 
-function CartItem({ item }: { item: CartItemDTO }) {
+function CartItem({
+  item,
+  children,
+}: {
+  item: (Omit<CartItemDTO, "cartId"> | WishlistItemDTO) & { quantity?: number };
+  children?: React.ReactNode;
+}) {
   const stock = getProductStatusVariant(
     item.product.stock,
     item.product.lowStockThreshold,
@@ -16,16 +23,18 @@ function CartItem({ item }: { item: CartItemDTO }) {
 
   return (
     <article
-      className={cn(
-        "flex gap-2 p-2 border border-muted rounded-lg relative",
-        // isPending ? "pointer-events-none opacity-50" : "",
-      )}
+      className={cn("flex-col sm:flex-row flex gap-2 border border-muted rounded-lg relative")}
     >
+      <ToggleWishlistButton
+        className="absolute end-2 top-2"
+        productId={item.product.id}
+        isWishlisted={item.product.isWishlist ?? false}
+      />
       <Link
         href={`/product/${item.product.slug}`}
         className="absolute inset-0 z-10 w-full h-full"
       />
-      <figure className="relative min-w-35 aspect-square overflow-hidden rounded-t-lg">
+      <figure className="relative min-w-40 min-h-40 aspect-auto overflow-hidden rounded-t-lg sm:rounded-s-lg sm:rounded-tr-none">
         <Image
           src={item.product.thumbnail}
           fill
@@ -86,17 +95,14 @@ function CartItem({ item }: { item: CartItemDTO }) {
                 </span>
               )}
           </div>
-          <UpdateQuantity
-            productId={item.product.id}
-            quantity={item.quantity}
-            stock={item.product.stock}
-          />
-          <RemoveFromCart
-            className="z-10 cursor-pointer p-2 [&_svg]:size-3"
-            productId={item.product.id}
-          >
-            <Trash2 />
-          </RemoveFromCart>
+          {!!item.quantity && (
+            <UpdateQuantity
+              productId={item.product.id}
+              quantity={item.quantity}
+              stock={item.product.stock}
+            />
+          )}
+          {children}
         </div>
       </div>
     </article>

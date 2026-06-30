@@ -22,7 +22,7 @@ export async function getCart(userId: string) {
       payload: {
         cartId: cart._id.toString(),
         appliedCoupon: cartCoupon ? mapCartCouponDTO(cartCoupon) : null,
-        items: cartItems?.map((product) => mapCartItemDTO(product)) || [],
+        items: cartItems || [],
       },
     };
   } catch (err) {
