@@ -11,12 +11,20 @@ export async function requireAuth(error = false): Promise<Session> {
     redirect("/");
   }
 
-  return session;
+  return {
+    user: {
+      email: session.user.email,
+      id: session.user.id,
+      role: session.user.role as Role,
+      name: session.user.name,
+      image: session.user.image ?? "",
+    },
+  };
 }
 
 export async function requireRole(
   allowedRoles: Role[],
-  error = false
+  error = false,
 ): Promise<Session> {
   const session = await requireAuth(error);
 

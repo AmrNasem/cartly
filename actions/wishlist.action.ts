@@ -1,6 +1,7 @@
 "use server";
 
 import { requireAuth } from "@/lib/auth/guards";
+import { getSession } from "@/lib/auth/session";
 import { connectDB } from "@/lib/db";
 import { mapWishlistItemToDTO } from "@/lib/mappers/wishlist.mapper";
 import { enrichProducts } from "@/lib/product/enrich-product";
@@ -12,7 +13,9 @@ import {
 } from "@/lib/services/wishlist.service";
 
 export async function getWishlistAction() {
-  const session = await requireAuth();
+  const session = await getSession();
+  if (!session) return [];
+
   await connectDB();
   const wishlist = await getWishlist(session.user.id);
   const enrichedProducts = await enrichProducts(
@@ -31,7 +34,7 @@ export async function getWishlistAction() {
 }
 
 export async function getWishlistCountAction() {
-  const session = await requireAuth();
+  const session = await requireAuth(true);
   await connectDB();
   return getWishlistCount(session.user.id);
 }
