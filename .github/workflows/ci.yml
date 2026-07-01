@@ -14,6 +14,20 @@ jobs:
       MONGODB_URI: mongodb://localhost:27017/cartly_test
       DB_NAME: cartly_test
 
+      GOOGLE_CLIENT_ID: client_id
+      GOOGLE_CLIENT_SECRET: client_secret
+
+      CLOUDINARY_URL: cloudinary
+
+      BETTER_AUTH_SECRET: secret
+      BETTER_AUTH_URL: url
+
+      NEXT_PUBLIC_APP_URL: url
+
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: key
+      STRIPE_SECRET_KEY: key
+      STRIPE_WEBHOOK_SECRET: secret
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
