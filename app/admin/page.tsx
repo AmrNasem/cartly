@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 const kpis = [
   {
@@ -77,10 +78,11 @@ function getStatusBadgeVariant(status: string) {
 }
 
 export const metadata: Metadata = {
-  title: "Admin Dashboard"
-}
+  title: "Admin Dashboard",
+};
 
 export default function AdminDashboardPage() {
+  redirect("/admin/products"); // Temp
   return (
     <div className="space-y-4 md:space-y-6">
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">

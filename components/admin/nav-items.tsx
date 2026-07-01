@@ -15,16 +15,16 @@ export type AdminNavItem = {
 };
 
 export const adminNavItems: AdminNavItem[] = [
-  {
-    label: "Dashboard",
-    href: "/admin",
-    icon: LayoutDashboard,
-  },
-  {
-    label: "Orders",
-    href: "/admin/orders",
-    icon: ShoppingBag,
-  },
+  // {
+  //   label: "Dashboard",
+  //   href: "/admin",
+  //   icon: LayoutDashboard,
+  // },
+  // {
+  //   label: "Orders",
+  //   href: "/admin/orders",
+  //   icon: ShoppingBag,
+  // },
   {
     label: "Products",
     href: "/admin/products",
@@ -35,16 +35,16 @@ export const adminNavItems: AdminNavItem[] = [
     href: "/admin/coupons",
     icon: Percent,
   },
-  {
-    label: "Customers",
-    href: "/admin/customers",
-    icon: Users,
-  },
-  {
-    label: "Analytics",
-    href: "/admin/analytics",
-    icon: BarChart3,
-  },
+  // {
+  //   label: "Customers",
+  //   href: "/admin/customers",
+  //   icon: Users,
+  // },
+  // {
+  //   label: "Analytics",
+  //   href: "/admin/analytics",
+  //   icon: BarChart3,
+  // },
   {
     label: "Logout",
     href: "/admin/logout",
