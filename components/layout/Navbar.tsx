@@ -1,4 +1,3 @@
-import { AuthUser } from "@/lib/auth/types";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -16,6 +15,7 @@ import CartPageNavigator from "../cart/cart-page-navigator";
 import Image from "next/image";
 import SearchInput from "./search-input";
 import WishlistNavigator from "../wishlist/wishlist-navigator";
+import { AuthUser } from "@/lib/auth/session";
 
 function Navbar({ user }: { user: AuthUser | null }) {
   console.log(user);
@@ -43,7 +43,7 @@ function Navbar({ user }: { user: AuthUser | null }) {
                   className="rounded-full border border-black/5 p-0 flex items-center justify-center"
                 >
                   <Avatar className="h-7 w-7">
-                    <AvatarImage src={user.image} alt={user.name} />
+                    <AvatarImage src={user.image ?? undefined} alt={user.name} />
                     <AvatarFallback>
                       {user.name
                         .split(" ")
