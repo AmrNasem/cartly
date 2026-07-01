@@ -1,8 +1,6 @@
 "use client";
 
-import {
-  CategoryTreeNode,
-} from "@/lib/utils/category-tree";
+import { CategoryTreeNode } from "@/lib/utils/category-tree";
 import { ShopFilters, buildShopUrl } from "@/lib/utils/shop-url";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
@@ -91,16 +89,25 @@ function CategoryTreeNodeItem({
   if (hasChildren) {
     return (
       <div>
-        <div
-          className="flex gap-0.5"
+        <Link
           style={{ paddingLeft }}
+          href={buildShopUrl({ ...filters, categorySlug: node.slug })}
+          className={cn(
+            "flex gap-1 items-center grow rounded-md p-2 pr-3 text-sm transition-colors",
+            isActive
+              ? "bg-primary/10 text-primary font-medium"
+              : "text-muted-foreground hover:bg-accent hover:text-foreground",
+          )}
         >
           <button
             type="button"
-            onClick={() => toggle(node.slug)}
+            onClick={(e) => {
+              e.preventDefault();
+              toggle(node.slug)
+            }}
             aria-expanded={isExpanded}
             aria-label={`${isExpanded ? "Collapse" : "Expand"} ${node.name}`}
-            className="cursor-pointer rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+            className="cursor-pointer rounded-md p-0.5 text-muted-foreground hover:bg-primary/10 hover:text-foreground transition-colors"
           >
             <ChevronRight
               className={cn(
@@ -109,34 +116,24 @@ function CategoryTreeNodeItem({
               )}
             />
           </button>
-          <Link
-            href={buildShopUrl({ ...filters, categorySlug: node.slug })}
-            className={cn(
-              "block grow rounded-md p-2 pr-3 text-sm transition-colors",
-              isActive
-                ? "bg-primary/10 text-primary font-medium"
-                : "text-muted-foreground hover:bg-accent hover:text-foreground",
-            )}
-          >
-            {node.name}
-          </Link>
-        </div>
-        {isExpanded &&
+
+          {node.name}
+        </Link>
+        {isExpanded && (
           <div className="mt-1">
-            {
-              node.children.map((child) => (
-                <CategoryTreeNodeItem
-                  key={child.slug}
-                  node={child}
-                  depth={depth + 1}
-                  filters={filters}
-                  activeCategorySlug={activeCategorySlug}
-                  expanded={expanded}
-                  toggle={toggle}
-                />
-              ))}
+            {node.children.map((child) => (
+              <CategoryTreeNodeItem
+                key={child.slug}
+                node={child}
+                depth={depth + 1}
+                filters={filters}
+                activeCategorySlug={activeCategorySlug}
+                expanded={expanded}
+                toggle={toggle}
+              />
+            ))}
           </div>
-        }
+        )}
       </div>
     );
   }
