@@ -21,8 +21,8 @@ import {
 const COUPONS_PATH = "/admin/coupons";
 
 export async function fetchAdminCouponsAction() {
-  await requireAdmin(true);
   await connectDB();
+  await requireAdmin(true);
   return getAdminCoupons();
 }
 
@@ -31,8 +31,8 @@ export async function createCouponAction(
   formData: FormData,
 ): Promise<CouponFormState> {
   try {
-    const session = await requireAdmin(true);
     await connectDB();
+    const session = await requireAdmin(true);
 
     const input = parseCouponFormData(formData);
     const validation = validateCouponCreate(input);
@@ -62,8 +62,8 @@ export async function updateCouponAction(
   formData: FormData,
 ): Promise<CouponFormState> {
   try {
-    await requireAdmin(true);
     await connectDB();
+    await requireAdmin(true);
 
     const input = parseCouponFormData(formData);
     const couponId = String(formData.get("couponId") ?? "");
@@ -90,8 +90,8 @@ export async function deleteCouponAction(
   couponId: string,
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    await requireAdmin(true);
     await connectDB();
+    await requireAdmin(true);
     await deleteCoupon(couponId);
     revalidatePath(COUPONS_PATH);
     return { success: true };
@@ -107,8 +107,8 @@ export async function getCouponToEditAction(
   couponId: string,
 ): Promise<{ success: boolean; error?: string; data?: CouponFormInput }> {
   try {
-    await requireAdmin(true);
     await connectDB();
+    await requireAdmin(true);
     const coupon = await fetchCoupon(couponId);
     return { success: true, data: coupon };
   } catch (err) {
@@ -124,8 +124,8 @@ export async function toggleCouponActiveAction(
   isActive: boolean,
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    await requireAdmin(true);
     await connectDB();
+    await requireAdmin(true);
     await toggleCouponActive(couponId, isActive);
     revalidatePath(COUPONS_PATH);
     return { success: true };
