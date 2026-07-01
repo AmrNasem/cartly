@@ -15,56 +15,56 @@ import { createPaymentIntent, getPaymentStatus } from "@/lib/services/payment.se
 import { CreateOrderInput } from "@/lib/types/checkout.types";
 
 export async function createOrderAction(orderData: Omit<CreateOrderInput, "userId">) {
-  const session = await requireAuth(true);
   await connectDB();
+  const session = await requireAuth(true);
   return createOrder({ ...orderData, userId: session.user.id })
 }
 
 export async function createPaymentIntentAction(orderId: string, orderData: Omit<CreateOrderInput, "userId" | "couponCode" | "items">) {
-  const session = await requireAuth(true);
   await connectDB();
+  const session = await requireAuth(true);
   return createPaymentIntent({ orderData: { ...orderData, userId: session.user.id }, orderId })
 }
 
 export async function getOrderAction(orderId: string) {
-  const session = await requireAuth(true);
   await connectDB();
+  const session = await requireAuth(true);
   return getOrder(orderId, session.user.id)
 }
 
 export async function getOrderForPaymentAction(orderId: string) {
-  const session = await requireAuth(true);
   await connectDB();
+const session = await requireAuth(true);
   return getOrderForPayment(orderId, session.user.id)
 }
 
 export async function listOrdersAction() {
-  const session = await requireAuth(true);
   await connectDB();
+  const session = await requireAuth(true);
   return getUserOrders(session.user.id);
 }
 
 export async function getOrderDetailAction(orderId: string) {
-  const session = await requireAuth(true);
   await connectDB();
+  const session = await requireAuth(true);
   return getOrderByIdForUser(orderId, session.user.id);
 }
 
 export async function cancelOrderAction(orderId: string) {
-  const session = await requireAuth(true);
   await connectDB();
+  const session = await requireAuth(true);
   return cancelOrder(orderId, session.user.id);
 }
 
 export async function buyAgainAction(orderId: string) {
-  const session = await requireAuth(true);
   await connectDB();
+  const session = await requireAuth(true);
   return buyAgainFromOrder(orderId, session.user.id);
 }
 
 export async function getPaymentStatusAction({ orderId, paymentIntentId }: { orderId?: string; paymentIntentId?: string }) {
-  await requireAuth(true);
   await connectDB();
+  await requireAuth(true);
   return getPaymentStatus({ orderId, paymentIntentId })
 }
 

@@ -13,10 +13,10 @@ import {
 } from "@/lib/services/wishlist.service";
 
 export async function getWishlistAction() {
+  await connectDB();
   const session = await getSession();
   if (!session) return [];
 
-  await connectDB();
   const wishlist = await getWishlist(session.user.id);
   const enrichedProducts = await enrichProducts(
     wishlist.map((item) => item.productId),
@@ -34,19 +34,19 @@ export async function getWishlistAction() {
 }
 
 export async function getWishlistCountAction() {
-  const session = await requireAuth(true);
   await connectDB();
+  const session = await requireAuth(true);
   return getWishlistCount(session.user.id);
 }
 
 export async function addToWishListAction(productId: string) {
-  const session = await requireAuth(true);
   await connectDB();
+  const session = await requireAuth(true);
   return addToWishlist(session.user.id, productId);
 }
 
 export async function removeFromWishListAction(productId: string) {
-  const session = await requireAuth(true);
   await connectDB();
+  const session = await requireAuth(true);
   return removeFromWishList(session.user.id, productId);
 }
