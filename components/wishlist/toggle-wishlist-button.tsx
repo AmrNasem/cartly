@@ -45,14 +45,20 @@ function ToggleWishlistButton({
         router.refresh();
       } catch (err) {
         console.log("Error adding to wishlist:", err);
+        setIsWishlistedState((prev) => !prev);
         error(
           err instanceof Error
             ? err.message
             : "Failed to add product to wishlist!",
         );
       }
-      const wishlistCount = await getWishlistCountAction();
-      setWishlistCount(wishlistCount)
+      try {
+        const wishlistCount = await getWishlistCountAction();
+        setWishlistCount(wishlistCount);
+      } catch (err) {
+        setWishlistCount((prev) => (buttonState ? prev + 1 : prev - 1));
+        console.log(err);
+      }
     });
   };
 
