@@ -1,4 +1,8 @@
+"use client";
+
 import { signIn } from "@/lib/auth/auth-client";
+import { Loader2 } from "lucide-react";
+import { useTransition } from "react";
 
 export function GoogleIcon() {
   return (
@@ -24,21 +28,31 @@ export function GoogleIcon() {
 }
 
 function AuthWithGoogle({ label }: { label: string }) {
-  const handleGoogleSignIn = async () => {
-    await signIn.social({
-      provider: "google",
-      callbackURL: "/",
+  const [isPending, startTransition] = useTransition();
+  const handleGoogleSignIn = () => {
+    startTransition(async () => {
+      await signIn.social({
+        provider: "google",
+        callbackURL: "/",
+      });
     });
   };
 
   return (
     <button
+      disabled={isPending}
       onClick={handleGoogleSignIn}
-      className="cursor-pointer w-full h-11 bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-3 relative overflow-hidden"
+      className="disabled:opacity-70 disabled:cursor-auto cursor-pointer w-full h-11 bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-3 relative overflow-hidden"
       type="button"
     >
-      <GoogleIcon />
-      <span>{label}</span>
+      {isPending ? (
+        <Loader2 size={20} className="animate-spin" />
+      ) : (
+        <>
+          <GoogleIcon />
+          <span>{label}</span>
+        </>
+      )}
     </button>
   );
 }
