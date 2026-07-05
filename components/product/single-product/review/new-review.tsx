@@ -26,7 +26,7 @@ function NewReview({ productId }: { productId: string }) {
         ...formData,
         comment: formData.comment.trim(),
       });
-      if (res.error) throw new Error(res.message);
+      if (!res.success) throw new Error(res.message);
       setSubmitFallback((prev) => ({ ...prev, loading: false, error: "" }));
       setFormData((prev) => ({ ...prev, rating: 0, comment: "" }));
       router.refresh();

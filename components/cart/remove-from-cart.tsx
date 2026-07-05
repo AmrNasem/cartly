@@ -26,7 +26,8 @@ function RemoveFromCart({
   const handleRemoveFromCart = useCallback(() => {
     startTransition(async () => {
       try {
-        await removeFromCartAction(productId);
+        const res = await removeFromCartAction(productId);
+        if (!res.success) throw new Error(res.message);
         router.refresh();
         removeFromCart(productId);
         success("Product removed from cart!");

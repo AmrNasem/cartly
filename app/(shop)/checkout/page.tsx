@@ -6,23 +6,24 @@ import { PaymentMethodSelector } from "@/components/checkout/payment-method-sele
 import { ShippingAddressForm } from "@/components/checkout/shipping-address-form";
 import SubmitCheckout from "@/components/checkout/submit-checkout";
 import { Button } from "@/components/ui/button";
-import { requireAuth } from "@/lib/auth/guards";
 import CheckoutFormProvider from "@/providers/checkout-form-provider";
 import { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Checkout",
 };
 
 export default async function CheckoutPage({ searchParams }: { searchParams: Promise<{ orderId: string }> }) {
-  await requireAuth();
   const orderId = (await searchParams).orderId;
-  if (!orderId) redirect("/")
+  if (!orderId) redirect("/cart")
 
-  const order = await getOrderAction(orderId);
-  if (!order) redirect("/")
+  const res = await getOrderAction(orderId);
+  if (!res.success) redirect("/")
+  const order = res.payload;
+  console.log(res)
+  if (!order) notFound();
 
   return <CheckoutFormProvider initialData={order}>
     <main className="mycontainer my-6">

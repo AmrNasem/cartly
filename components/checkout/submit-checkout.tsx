@@ -46,13 +46,14 @@ function SubmitCheckout({
     setFieldErrors({});
 
     try {
-      await createPaymentIntentAction(orderId, {
+      const res = await createPaymentIntentAction(orderId, {
         cartId: cartId ?? undefined,
         shippingAddress: formData.shippingAddress,
         paymentMethod,
         orderNotes,
       });
 
+      if (!res.success) throw new Error(res.message);
       if (paymentMethod === "COD") {
         clearCart();
         success(

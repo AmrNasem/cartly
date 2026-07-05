@@ -8,7 +8,9 @@ import { useEffect } from "react";
 function WishlistNavigator() {
   const { setWishlistCount, wishlistCount } = useWishlist();
   useEffect(() => {
-    getWishlistCountAction().then(setWishlistCount);
+    getWishlistCountAction().then((res) =>
+      setWishlistCount((prev) => (res.success ? (res.payload ?? prev) : prev)),
+    );
   }, [setWishlistCount]);
 
   return (

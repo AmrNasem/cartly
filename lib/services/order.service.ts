@@ -10,6 +10,7 @@ import {
 } from "../mappers/order.mapper";
 import { retrieveClientSecret } from "./payment.service";
 import { addOrderItemsToCart } from "./cart.service";
+import mongoose from "mongoose";
 
 export async function createOrder({
   userId,
@@ -160,7 +161,7 @@ export async function fulfillPaidOrder(
 export async function getOrderForPayment(orderId: string, userId: string) {
   const order = await getOrder(orderId, userId);
 
-  if (!order) return {};
+  if (!order) return null;
 
   if (order.paymentIntentId) {
     const clientSecret = await retrieveClientSecret(order.paymentIntentId);
@@ -171,6 +172,8 @@ export async function getOrderForPayment(orderId: string, userId: string) {
 }
 
 export async function getOrder(orderId: string, userId: string) {
+  if (!mongoose.Types.ObjectId.isValid(orderId)) return;
+
   const order = await Order.findOne({
     _id: orderId,
     userId,

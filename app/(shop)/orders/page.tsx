@@ -2,16 +2,14 @@ import { Metadata } from "next";
 import { listOrdersAction } from "@/actions/order.action";
 import { OrderList } from "@/components/orders/order-list";
 import { OrdersEmpty } from "@/components/orders/orders-empty";
-import { requireAuth } from "@/lib/auth/guards";
 
 export const metadata: Metadata = {
   title: "My Orders",
 };
 
 export default async function OrdersPage() {
-  await requireAuth();
-  const orders = await listOrdersAction();
-
+  const res = await listOrdersAction();
+  const orders = res.success ? res.payload || [] : [];
   return (
     <main className="mycontainer my-6 space-y-6">
       <div className="space-y-1">

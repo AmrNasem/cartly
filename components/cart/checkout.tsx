@@ -6,7 +6,10 @@ import { cn } from "@/lib/utils";
 import { useCartStore } from "@/store/cart-store";
 import Link from "next/link";
 import { FormEvent, useCallback, useState } from "react";
-import { applyCouponAction, removeCartCouponAction } from "@/actions/cart.action";
+import {
+  applyCouponAction,
+  removeCartCouponAction,
+} from "@/actions/cart.action";
 import { useToast } from "@/hooks/use-toast";
 import {
   calcCartDiscount,
@@ -29,7 +32,10 @@ function Checkout({ className = "" }) {
   const [checkingOut, setCheckingOut] = useState(false);
 
   const { subtotal, tax, discount, total } = calculateOrderTotals(
-    items?.map(item => ({ price: item.product.price, quantity: item.quantity  })) ?? [],
+    items?.map((item) => ({
+      price: item.product.price,
+      quantity: item.quantity,
+    })) ?? [],
     appliedCoupon?.coupon ?? null,
   );
 
@@ -42,12 +48,12 @@ function Checkout({ className = "" }) {
       cartId: cartId,
     });
     console.log(res);
-    if (res.error) {
-      error(res.error);
+    if (!res.success) {
+      error(res.message);
       setCoupon((prev) => ({ ...prev, loading: false }));
     } else {
       setCoupon((prev) => ({ ...prev, loading: false, value: "" }));
-      setAppliedCoupon(res.appliedCoupon);
+      setAppliedCoupon(res.payload);
     }
   };
 
@@ -70,17 +76,23 @@ function Checkout({ className = "" }) {
 
     try {
       setCheckingOut(true);
-      const order = await createOrderAction({
-        items: items.map(item => ({ id: item.product.id, quantity: item.quantity })),
-        couponCode: appliedCoupon?.coupon.code || null
-      })
+      const res = await createOrderAction({
+        items: items.map((item) => ({
+          id: item.product.id,
+          quantity: item.quantity,
+        })),
+        couponCode: appliedCoupon?.coupon.code || null,
+      });
+      if (!res.success) throw new Error(res.message);
+      const order = res.payload;
+      if (!order) throw new Error();
       router.push(`/checkout?orderId=${order.id}`);
     } catch (err) {
-      error(err instanceof Error ? err.message : "Something went wrong!")
+      error(err instanceof Error ? err.message : "Something went wrong!");
     } finally {
       setCheckingOut(false);
     }
-  }, [error, items, router, appliedCoupon])
+  }, [error, items, router, appliedCoupon]);
 
   return (
     <div className={cn("my-5", className)}>
@@ -106,7 +118,15 @@ function Checkout({ className = "" }) {
                     : `-$${appliedCoupon.coupon.discountValue}`}
                 </span>
               </div>
-              <Button disabled={coupon.loading} onClick={handleRemoveCoupon} variant="ghost" size="sm" className="text-[11px] text-red-500 border-red-500 px-1 py-px hover:text-red-500 cursor-pointer hover:bg-white">Remove</Button>
+              <Button
+                disabled={coupon.loading}
+                onClick={handleRemoveCoupon}
+                variant="ghost"
+                size="sm"
+                className="text-[11px] text-red-500 border-red-500 px-1 py-px hover:text-red-500 cursor-pointer hover:bg-white"
+              >
+                Remove
+              </Button>
             </div>
           ) : (
             <form
@@ -167,13 +187,17 @@ function Checkout({ className = "" }) {
             onClick={handleCheckout}
             className="block w-full font-semibold rounded-md text-sm text-center py-2 cursor-pointer"
           >
-            {
-              checkingOut ? <Loader2 className="animate-spin mx-auto" />
-                :
-                "Continue to checkout"
-            }
+            {checkingOut ? (
+              <Loader2 className="animate-spin mx-auto" />
+            ) : (
+              "Continue to checkout"
+            )}
           </Button>
-          <Button className="w-full block text-center" variant="outline" asChild>
+          <Button
+            className="w-full block text-center"
+            variant="outline"
+            asChild
+          >
             <Link href="/shop" className="">
               Continue shopping
             </Link>

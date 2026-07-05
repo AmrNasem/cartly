@@ -11,3 +11,21 @@ export interface AuthUser {
 export interface Session {
   user: AuthUser;
 }
+
+export type ActionResponse<T = void> =
+  | {
+      success: true;
+      message?: string;
+      payload?: T;
+    }
+  | {
+      success: false;
+      message: string;
+      errors?: Record<string, string[]>;
+    };
+
+export const unAuthorizedError = "You must login first!";
+
+export function getUnAuthorizedActionResponse<T>(): ActionResponse<T> {
+  return { success: false, message: unAuthorizedError };
+}

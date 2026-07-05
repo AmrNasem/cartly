@@ -20,13 +20,14 @@ function AddToCart({
   const [isPending, startTransition] = useTransition();
   const { error, success } = useToast();
   const router = useRouter();
-  const addToCart = useCartStore(state => state.addToCart)
+  const addToCart = useCartStore((state) => state.addToCart);
 
   const handleAddToCart = useCallback(() => {
     startTransition(async () => {
       try {
         const res = await addToCartAction(productId);
-        addToCart(res.payload)
+        if (!res.success) throw new Error(res.message);
+        if (res.payload) addToCart(res.payload);
         router.refresh();
         success("Product added to cart!");
       } catch (err) {

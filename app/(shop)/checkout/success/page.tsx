@@ -51,11 +51,11 @@ export default async function SuccessPage({
     redirect("/");
   }
 
-  const result = await getPaymentStatusAction({ orderId, paymentIntentId })
+  const res = await getPaymentStatusAction({ orderId, paymentIntentId })
 
-  if (!result) redirect("/");
+  if (!res.success || !res.payload) redirect("/");
 
-  const { status, displayOrderId, totalAmount, paymentProvider } = result;
+  const { status, displayOrderId, totalAmount, paymentProvider } = res.payload;
 
   const content = STATUS_CONTENT[status] ?? STATUS_CONTENT.default;
 

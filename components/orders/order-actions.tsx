@@ -29,7 +29,9 @@ export function OrderActions({
   const handleCancel = useCallback(() => {
     startTransition(async () => {
       try {
-        await cancelOrderAction(orderId);
+        const res = await cancelOrderAction(orderId);
+        if (!res.success) throw new Error(res.message);
+
         success("Order cancelled successfully.");
         router.refresh();
       } catch (err) {
@@ -41,8 +43,10 @@ export function OrderActions({
   const handleBuyAgain = useCallback(() => {
     startTransition(async () => {
       try {
-        const result = await buyAgainAction(orderId);
-        if (result.addedCount === 0) {
+        const res = await buyAgainAction(orderId);
+        if (!res.success) throw new Error(res.message);
+        const payload = res.payload;
+        if (payload && payload.addedCount === 0) {
           error("No items could be added to your cart.");
           return;
         }

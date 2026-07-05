@@ -35,16 +35,20 @@ function ToggleWishlistButton({
       try {
         if (buttonState) {
           const res = await removeFromWishListAction(productId);
-          if (!res) throw new Error("Failed to remove product from wishlist!");
+          if (!res.success)
+            throw new Error("Failed to remove product from wishlist!");
           success("Product removed from wishlist!");
         } else {
           const res = await addToWishListAction(productId);
-          if (typeof res === "string") throw new Error(res);
+          if (!res.success) throw new Error(res.message);
           success("Product added to wishlist!");
         }
         router.refresh();
       } catch (err) {
-        console.log("Error adding to wishlist:", err);
+        console.log(
+          `Error ${buttonState ? "removing from" : "adding to"} wishlist:`,
+          err,
+        );
         setIsWishlistedState((prev) => !prev);
         error(
           err instanceof Error
@@ -53,8 +57,9 @@ function ToggleWishlistButton({
         );
       }
       try {
-        const wishlistCount = await getWishlistCountAction();
-        setWishlistCount(wishlistCount);
+        const res = await getWishlistCountAction();
+        if (!res.success) throw new Error(res.message);
+        if (res.payload) setWishlistCount(res.payload);
       } catch (err) {
         setWishlistCount((prev) => (buttonState ? prev + 1 : prev - 1));
         console.log(err);

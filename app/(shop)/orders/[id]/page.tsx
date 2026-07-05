@@ -1,8 +1,7 @@
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getOrderDetailAction } from "@/actions/order.action";
 import { OrderDetailView } from "@/components/orders/order-detail-view";
-import { requireAuth } from "@/lib/auth/guards";
 
 export const metadata: Metadata = {
   title: "Order Details",
@@ -13,10 +12,12 @@ type OrderDetailPageProps = {
 };
 
 export default async function OrderDetailPage({ params }: OrderDetailPageProps) {
-  await requireAuth();
   const { id } = await params;
-  const order = await getOrderDetailAction(id);
+  const res = await getOrderDetailAction(id);
 
+  if (!res.success) redirect("/");
+  
+  const order = res.payload;
   if (!order) notFound();
 
   return (

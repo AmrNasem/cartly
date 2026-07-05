@@ -18,10 +18,21 @@ export default async function PaymentPage({
     redirect("/");
   }
 
-  const { order, clientSecret } = await getOrderForPaymentAction(orderId);
+  const res = await getOrderForPaymentAction(orderId);
+
+  if (!res.success || !res.payload) redirect("/");
+
+  const { order, clientSecret } = res.payload;
 
   if (!order) redirect("/");
   if (!clientSecret) redirect(`/checkout?orderId=${order.id}`);
 
-  return <PaymentPageClient items={order.items} totalAmount={order.totalAmount} orderId={orderId} clientSecret={clientSecret} />;
+  return (
+    <PaymentPageClient
+      items={order.items}
+      totalAmount={order.totalAmount}
+      orderId={orderId}
+      clientSecret={clientSecret}
+    />
+  );
 }
