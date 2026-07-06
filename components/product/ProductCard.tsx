@@ -12,12 +12,14 @@ function ProductCard({ product }: { product: ProductCardDTO }) {
       <Link
         href={`/product/${product.slug}`}
         className="absolute inset-0 z-10 w-full h-full"
+        aria-label={`View details for ${product.title}`}
       />
 
       <figure className="relative h-48 overflow-hidden rounded-t-lg">
         <ToggleWishlistButton
           isWishlisted={product.isWishlist ?? false}
           productId={product.id}
+          productTitle={product.title}
           className="absolute end-2 top-2 md:opacity-0 group-hover:opacity-100"
         />
         <div className="flex gap-2 absolute top-2 start-2">

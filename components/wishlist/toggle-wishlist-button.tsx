@@ -14,10 +14,12 @@ import { useState, useTransition } from "react";
 
 function ToggleWishlistButton({
   productId,
+  productTitle = "this product",
   isWishlisted,
   className = "",
 }: {
   productId: string;
+  productTitle?: string;
   isWishlisted: boolean;
   className?: string;
 }) {
@@ -75,6 +77,11 @@ function ToggleWishlistButton({
         "z-20 size-7 min-w-7 min-h-7 disabled:opacity-80 disabled:cursor-auto flex items-center justify-center rounded-full bg-secondary hover:bg-secondary/80 duration-150 cursor-pointer",
         className,
       )}
+      aria-label={
+        isWishlistedState
+          ? `Remove ${productTitle} from wishlist`
+          : `Add ${productTitle} to wishlist`
+      }
     >
       {isWishlistedState ? (
         <Heart fill="red" stroke="red" className="size-4 text-muted-primary" />
