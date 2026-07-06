@@ -6,6 +6,7 @@ import { computeRatingProgress } from "../product/product.utils";
 import { CategoryPath } from "../types/category.types";
 import { mapCategoryDTO } from "../mappers/category.mapper";
 import { getDescendantIds } from "../utils/category-tree";
+import { db } from "../auth/auth";
 
 function getProductSort(sort: ShopSort = "newest"): Record<string, SortOrder> {
   switch (sort) {
@@ -204,14 +205,32 @@ export async function getReviewsByProductId(
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .populate("userId", "name image")
       .lean(),
 
     Review.countDocuments({ productId }),
   ]);
 
+  const userIds = [
+    ...new Set(reviews.map((review) => review.userId.toString())),
+  ].map((id) => new mongoose.Types.ObjectId(id));
+
+  const users = await db
+    .collection<{ name: string; image?: string; email: string }>("user")
+    .find({ _id: { $in: userIds } })
+    .toArray();
+
   return {
-    reviews: reviews.map((review) => mapSingleReviewDTO(review)),
+    reviews: reviews
+      .filter((review) => review.userId)
+      .map((review) => {
+        const user = users.find((u) => u._id.equals(review.userId));
+        return mapSingleReviewDTO(
+          review,
+          user
+            ? { name: user.name, image: user.image, email: user.email }
+            : undefined,
+        );
+      }),
     pagination: {
       page,
       limit,

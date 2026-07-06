@@ -10,7 +10,7 @@ function SingleReviewSkeleton() {
           <Skeleton className="w-20" />
         </div>
         <div className="space-y-2">
-          <div className="h-1.5 w-1/2 bg-muted rounded-[2px]"></div>
+          <div className="h-1.5 w-1/2 bg-muted rounded-xs"></div>
           <Skeleton className="h-1.5 w-1/2" />
           <Skeleton className="h-1.5 w-1/3" />
         </div>

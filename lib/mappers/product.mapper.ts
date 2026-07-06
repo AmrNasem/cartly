@@ -54,15 +54,21 @@ export function mapSingleProductDTO(
   };
 }
 
-export function mapSingleReviewDTO(review: any): SingleReviewDTO {
+export function mapSingleReviewDTO(
+  review: any,
+  user?: { name: string; image?: string; email: string },
+): SingleReviewDTO {
   return {
     comment: review.comment,
     createdAt: review.createdAt,
     rating: review.rating,
-    user: {
-      image: review.userId.image,
-      name: review.userId.name,
-    },
+    user: user
+      ? {
+          image: user.image,
+          name: user.name,
+          email: user.email,
+        }
+      : review.userId.toString(),
     id: review._id.toString(),
   };
 }

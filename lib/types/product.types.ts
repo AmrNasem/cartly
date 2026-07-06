@@ -15,7 +15,11 @@ export type ProductCardDTO = {
 export type CartItemDTO = {
   id: string;
   quantity: number;
-  product: ProductCardDTO & { description: string; stock: number; lowStockThreshold: number };
+  product: ProductCardDTO & {
+    description: string;
+    stock: number;
+    lowStockThreshold: number;
+  };
   cartId: string;
 };
 
@@ -25,13 +29,13 @@ export type Thumbnail = {
   alt?: string;
   order?: number;
   publicId: string;
-}
+};
 
 export type SingleProductDTO = {
   description: string;
   stock: number;
   lowStockThreshold: number;
-  images: Thumbnail[]
+  images: Thumbnail[];
   isCarted: boolean;
   isWishList: boolean;
 } & Omit<ProductCardDTO, "thumbnail" | "isNew">;
@@ -41,7 +45,13 @@ export type ProductImageForm = {
   order: number;
 };
 
-export type SingleReviewDTO = { user: { image: string; name: string; }; createdAt: string; rating: number; comment: string; id: string }
+export type SingleReviewDTO = {
+  user: { image: string; name: string };
+  createdAt: string;
+  rating: number;
+  comment: string;
+  id: string;
+};
 
 export type ProductFormState = {
   title: string;
