@@ -8,7 +8,7 @@ Cartly provides a complete online shopping experience for customers while offeri
 
 ## 🚀 Live Demo
 
-> **Coming Soon**
+> **https://cartly-eg.vercel.app**
 
 ---
 
